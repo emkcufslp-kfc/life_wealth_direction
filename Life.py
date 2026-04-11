@@ -287,7 +287,7 @@ if menu == "🚀 核心財務審計":
     st.sidebar.header("👤 執行長資料輸入")
     birth_date = st.sidebar.date_input(
         "出生日期", 
-        datetime.date(1990, 1, 1),
+        datetime.date(1971, 11, 18),
         min_value=datetime.date(1927, 1, 1),
         max_value=datetime.date(2026, 12, 31)
     )
@@ -296,7 +296,7 @@ if menu == "🚀 核心財務審計":
         "(07:00-09:00) 辰時", "(09:00-11:00) 巳時", "(11:00-13:00) 午時", "(13:00-15:00) 未時",
         "(15:00-17:00) 申時", "(17:00-19:00) 酉時", "(19:00-21:00) 戌時", "(21:00-23:00) 亥時"
     ]
-    birth_hour_raw = st.sidebar.selectbox("出生時辰", time_branches, index=5)
+    birth_hour_raw = st.sidebar.selectbox("出生時辰", time_branches, index=2)
     birth_hour = time_branches.index(birth_hour_raw)
     gender = st.sidebar.radio("性別", ["男", "女"], index=0)
     is_lunar = st.sidebar.checkbox("是否為農曆日期", value=False)
