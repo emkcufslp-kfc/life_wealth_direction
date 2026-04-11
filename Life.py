@@ -92,6 +92,7 @@ st.markdown("""
 
 st.title("🧭 紫微財務風控：格局與風險審計系統")
 st.markdown("本系統整合《飛星及欽天派財運解析》，自動完成從化祿獲利導航到化忌風險防火牆的深度審計。")
+st.sidebar.caption("系統版本: v1.0.4-TwoLayer (Updated)")
 
 # --- 2. Sidebar Navigation & Global References ---
 st.sidebar.title("🗂️ 系統導航")
@@ -118,19 +119,37 @@ def render_astrolabe_grid(grid_data, audit, focused_trans=None, birth_info=None)
         # Star Processing Helper with Si Hua Check
         def process_stars(star_list, cat_color):
             processed = []
+            innate_info = audit.get('innate', {}).get('stars', {})
+            innate_colors = {"祿": "#22c55e", "權": "#fbbf24", "科": "#38bdf8", "忌": "#ef4444"}
+            
             for star in star_list:
+                # Clean name for matching
+                clean_star = star.strip().replace(" ", "")
                 star_text = star
+                
+                # 1. Check for Innate (Birth-year) Si Hua - Static
+                for t_type, s_data in innate_info.items():
+                    target_star = s_data['star'].strip().replace(" ", "")
+                    # Direct match or containment
+                    if target_star in clean_star or clean_star in target_star:
+                        if s_data['palace'] == p['name']:
+                            color = innate_colors.get(t_type, "#cbd5e1")
+                            star_text = f'<span style="color:{color}; font-weight:800; border-bottom:1px solid {color}">{star}(生年{t_type})</span>'
+                
+                # 2. Check for Relational (Palace-flying) Si Hua - Dynamic
                 if focused_trans:
                     match = None
                     for ts_name, ts_data in focused_trans.items():
-                        if ts_name in star or star in ts_name:
+                        clean_ts = ts_name.strip().replace(" ", "")
+                        if clean_ts in clean_star or clean_star in clean_ts:
                             match = ts_data
                             break
                     if match and match['dest'] == p['name']:
                         if match['type'] == '祿':
-                            star_text = f'<span style="color:#22c55e">{star}(祿)</span>'
+                            star_text = f'<span style="color:#22c55e">{star_text}(祿)</span>'
                         elif match['type'] == '忌':
-                            star_text = f'<span style="color:#ef4444">{star}(忌)</span>'
+                            star_text = f'<span style="color:#ef4444">{star_text}(忌)</span>'
+                
                 processed.append(star_text)
             
             # Special logic for Lu Cun (Dark Green)
@@ -284,7 +303,10 @@ if menu == "🚀 核心財務審計":
 
     if st.sidebar.button("🚀 開始深度財務審計", use_container_width=True) or 'audit_data' in st.session_state:
         try:
-            if 'engine' not in st.session_state or st.sidebar.button("🔄 重新計算"):
+            # Force re-calculation if 'innate' key is missing (ensures migration to new logic)
+            force_recalc = 'audit_data' in st.session_state and 'innate' not in st.session_state.audit_data
+            
+            if 'engine' not in st.session_state or st.sidebar.button("🔄 重新計算") or force_recalc:
                 st.session_state.engine = ZiWeiEngine(birth_date.year, birth_date.month, birth_date.day, birth_hour, is_lunar, gender)
                 st.session_state.audit_data = st.session_state.engine.get_wealth_audit()
                 st.session_state.grid_data = st.session_state.engine.get_astrolabe_data()
@@ -339,32 +361,33 @@ if menu == "🚀 核心財務審計":
                 st.info(f"**發展方向建議**: {p['direction']}")
                 
                 # --- [NEW] Innate Potential Map (Red Box) ---
-                st.markdown(f"""
-                    <div style="padding: 20px; 
-                                background: rgba(239, 68, 68, 0.1); 
-                                border: 2px solid #ef4444; 
-                                border-radius: 15px; 
-                                margin-top: 15px; 
-                                margin-bottom: 25px;
-                                box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);">
-                        <h4 style="color: #ef4444; margin-bottom: 15px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
-                            🎯 先天格局分布 (生年：{audit['innate']['stem']}干)
-                        </h4>
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                """, unsafe_allow_html=True)
-                
-                innate_stars = audit['innate']['stars']
-                colors = {"祿": "#22c55e", "權": "#fbbf24", "科": "#38bdf8", "忌": "#ef4444"}
-                for t_type, s_data in innate_stars.items():
+                if 'innate' in audit:
                     st.markdown(f"""
-                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border-left: 4px solid {colors[t_type]};">
-                            <span style="color: {colors[t_type]}; font-weight: 800; font-size: 0.9rem;">{t_type}</span>
-                            <div style="color: #f8fafc; font-weight: 600; font-size: 1rem;">{s_data['star']}</div>
-                            <div style="color: #94a3b8; font-size: 0.8rem;">位於：{s_data['palace']}</div>
-                        </div>
+                        <div style="padding: 20px; 
+                                    background: rgba(239, 68, 68, 0.1); 
+                                    border: 2px solid #ef4444; 
+                                    border-radius: 15px; 
+                                    margin-top: 15px; 
+                                    margin-bottom: 25px;
+                                    box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);">
+                            <h4 style="color: #ef4444; margin-bottom: 15px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                                🎯 先天格局分布 (生年：{audit['innate']['stem']}干)
+                            </h4>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
                     """, unsafe_allow_html=True)
-                
-                st.markdown("</div><div style='color: #cbd5e1; font-size: 0.8rem; margin-top: 12px; font-style: italic;'>註：先天四化為出生時賦予的原始潛能與底氣</div></div>", unsafe_allow_html=True)
+                    
+                    innate_stars = audit['innate']['stars']
+                    colors = {"祿": "#22c55e", "權": "#fbbf24", "科": "#38bdf8", "忌": "#ef4444"}
+                    for t_type, s_data in innate_stars.items():
+                        st.markdown(f"""
+                            <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border-left: 4px solid {colors[t_type]};">
+                                <span style="color: {colors[t_type]}; font-weight: 800; font-size: 0.9rem;">{t_type}</span>
+                                <div style="color: #f8fafc; font-weight: 600; font-size: 1rem;">{s_data['star']}</div>
+                                <div style="color: #94a3b8; font-size: 0.8rem;">位於：{s_data['palace']}</div>
+                            </div>
+                        """, unsafe_allow_html=True)
+                    
+                    st.markdown("</div><div style='color: #cbd5e1; font-size: 0.8rem; margin-top: 12px; font-style: italic;'>註：先天四化為出生時賦予的原始潛能與底氣</div></div>", unsafe_allow_html=True)
                 
                 # --- Pillar Summary Block (Updated Label) ---
 
