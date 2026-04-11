@@ -338,23 +338,35 @@ if menu == "🚀 核心財務審計":
                 st.markdown(f"**意志力評估**: {p['willpower']}")
                 st.info(f"**發展方向建議**: {p['direction']}")
                 
-                # --- Pillar Summary Block ---
-                st.divider()
-                st.markdown("""
-                    <div style="padding: 15px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; border: 1px solid #334155;">
-                        <h4 style="color: #fbbf24; margin-bottom: 12px; font-size: 1.1rem;">🔑 核心宮位四化</h4>
+                # --- [NEW] Innate Potential Map (Red Box) ---
+                st.markdown(f"""
+                    <div style="padding: 20px; 
+                                background: rgba(239, 68, 68, 0.1); 
+                                border: 2px solid #ef4444; 
+                                border-radius: 15px; 
+                                margin-top: 15px; 
+                                margin-bottom: 25px;
+                                box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);">
+                        <h4 style="color: #ef4444; margin-bottom: 15px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                            🎯 先天格局分布 (生年：{audit['innate']['stem']}干)
+                        </h4>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
                 """, unsafe_allow_html=True)
                 
-                key_summary = engine.get_key_si_hua_summary()
-                for p_name, trans in key_summary.items():
+                innate_stars = audit['innate']['stars']
+                colors = {"祿": "#22c55e", "權": "#fbbf24", "科": "#38bdf8", "忌": "#ef4444"}
+                for t_type, s_data in innate_stars.items():
                     st.markdown(f"""
-                        <div style="margin-bottom: 10px; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 8px;">
-                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.9rem;">{p_name}</div>
-                            <div style="font-size: 0.8rem; color: #22c55e;">祿：{trans['lu']}</div>
-                            <div style="font-size: 0.8rem; color: #ef4444;">忌：{trans['ji']}</div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border-left: 4px solid {colors[t_type]};">
+                            <span style="color: {colors[t_type]}; font-weight: 800; font-size: 0.9rem;">{t_type}</span>
+                            <div style="color: #f8fafc; font-weight: 600; font-size: 1rem;">{s_data['star']}</div>
+                            <div style="color: #94a3b8; font-size: 0.8rem;">位於：{s_data['palace']}</div>
                         </div>
                     """, unsafe_allow_html=True)
-                st.markdown("</div>", unsafe_allow_html=True)
+                
+                st.markdown("</div><div style='color: #cbd5e1; font-size: 0.8rem; margin-top: 12px; font-style: italic;'>註：先天四化為出生時賦予的原始潛能與底氣</div></div>", unsafe_allow_html=True)
+                
+                # --- Pillar Summary Block (Updated Label) ---
 
             st.divider()
             
@@ -364,37 +376,51 @@ if menu == "🚀 核心財務審計":
             
             with t1:
                 w = audit['wealth']
-                st.markdown(f"#### 獲利與風險雙向分析")
+                st.markdown(f"#### 🏦 業務部 (財帛宮) 審計報告")
+                
+                # --- Layer 1: Innate Setup ---
+                st.subheader("🛠️ 第一層：先天構架 (Innate Setup)")
+                st.info(f"**先天資源分佈**: {', '.join(w['innate_setup'])}")
+                
+                # --- Layer 2: Relational Flow ---
+                st.subheader("🔄 第二層：對待關係 (Relational Flow)")
                 c1, c2 = st.columns(2)
                 with c1:
-                    st.success(f"📈 **獲利導航 (祿)**: {w['lu_dest']}")
-                    st.markdown(f"> **原因**: {w['lu_why']}")
-                    st.markdown(f"💡 **操作方式**: {w['lu_how']}")
+                    st.success(f"📈 **獲利導向 (祿)**: {w['lu_dest']}")
+                    st.markdown(f"> **流向原因**: {w['lu_why']}")
+                    st.markdown(f"💡 **戰略解法**: {w['lu_how']}")
                     st.markdown(f"✅ **最終戰略**: {w['lu_conclusion']}")
                 with c2:
-                    st.error(f"📉 **財務隱憂 (忌)**: {w['ji_dest']}")
-                    st.markdown(f"> **原因**: {w['ji_why']}")
-                    st.markdown(f"💡 **操作方式**: {w['ji_how']}")
+                    st.error(f"📉 **風險防火牆 (忌)**: {w['ji_dest']}")
+                    st.markdown(f"> **壓力來源**: {w['ji_why']}")
+                    st.markdown(f"💡 **戰略防護**: {w['ji_how']}")
                     st.markdown(f"⚠️ **最終戰略**: {w['ji_conclusion']}")
                 st.divider()
-                st.info(f"**業務動態【動態分布】**: {w['collision']}")
+                st.warning(f"**宮位對待動態**: {w['collision']}")
 
             with t2:
                 pr = audit['property']
-                st.markdown(f"#### 資產與流失風險審計")
+                st.markdown(f"#### 🏰 金庫部 (田宅宮) 審計報告")
+                
+                # --- Layer 1: Innate Setup ---
+                st.subheader("🛠️ 第一層：先天構架 (Innate Setup)")
+                st.info(f"**先天資產屬性**: {', '.join(pr['innate_setup'])}")
+                
+                # --- Layer 2: Relational Flow ---
+                st.subheader("🔄 第二層：對待關係 (Relational Flow)")
                 c1, c2 = st.columns(2)
                 with c1:
-                    st.success(f"🔒 **長期資產 (祿)**: {pr['lu_dest']}")
-                    st.markdown(f"> **原因**: {pr['lu_why']}")
-                    st.markdown(f"💡 **操作方式**: {pr['lu_how']}")
+                    st.success(f"🔒 **資產增值 (祿)**: {pr['lu_dest']}")
+                    st.markdown(f"> **擴張原因**: {pr['lu_why']}")
+                    st.markdown(f"💡 **戰略解法**: {pr['lu_how']}")
                     st.markdown(f"✅ **最終戰略**: {pr['lu_conclusion']}")
                 with c2:
-                    st.error(f"💸 **流失風險 (忌)**: {pr['ji_dest']}")
-                    st.markdown(f"> **原因**: {pr['ji_why']}")
-                    st.markdown(f"💡 **操作方式**: {pr['ji_how']}")
+                    st.error(f"💸 **資產流失 (忌)**: {pr['ji_dest']}")
+                    st.markdown(f"> **風險原因**: {pr['ji_why']}")
+                    st.markdown(f"💡 **戰略防護**: {pr['ji_how']}")
                     st.markdown(f"⚠️ **最終戰略**: {pr['ji_conclusion']}")
                 st.divider()
-                st.info(f"**金庫動態【動態分布】**: {pr['collision']}")
+                st.warning(f"**資產對待動態**: {pr['collision']}")
 
             with t3:
                 st.markdown("### 12宮位「祿忌沖照」動態分析")

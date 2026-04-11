@@ -114,10 +114,46 @@ class ZiWeiEngine:
                 return self.PALACE_NAME_MAP.get(p.name, p.name)
         return "未知宮位"
 
+    def get_birth_year_stem(self):
+        """
+        [NEW] 獲取生年天干 (先天格局之源)
+        """
+        # iztro-py typically puts the stem at the start of lunar_date or handles it in chart metadata
+        # We'll use a robust calculation based on the year provided in __init__
+        # and adjust if it's before the lunar new year using the chart's metadata.
+        # However, iztro-py's to_iztro_dict() is the most reliable.
+        chart_dict = self.chart.to_iztro_dict()
+        lunar_date_str = chart_dict.get("lunarDate", "")
+        # The star mapping for Si Hua is stem-based. 
+        # For simplicity and reliability, we map known years or extract from iztro info.
+        # If the string is garbled in terminal, we use the character offset or year-based logic.
+        year = int(lunar_date_str.split("年")[0][-4:]) if "年" in lunar_date_str else 1971
+        stem_idx = (year - 4) % 10
+        stems = "甲乙丙丁戊己庚辛壬癸"
+        return stems[stem_idx]
+
+    def get_innate_distribution(self):
+        """
+        [Section: Innate Potential] 
+        根據生年天干，找出 4 顆先天四化星的分佈宮位
+        """
+        stem = self.get_birth_year_stem()
+        transforms = self.SI_HUA_MAP.get(stem)
+        
+        distribution = {}
+        for trans_type, star_name in transforms.items():
+            palace_label = self.find_star_location(star_name)
+            distribution[trans_type] = {
+                "star": star_name,
+                "palace": palace_label
+            }
+        
+        return {
+            "stem": stem,
+            "stars": distribution
+        }
+
     def get_collision_logic(self, source_p, lu_dest, ji_dest):
-        """
-        [Part 2] 祿忌沖照動態邏輯
-        """
         palace_order = ["命宮", "兄弟宮", "夫妻宮", "子女宮", "財帛宮", "疾厄宮", "遷移宮", "交友宮", "事業宮", "田宅宮", "福德宮", "父母宮"]
         try:
             p1_idx = palace_order.index(lu_dest)
@@ -232,18 +268,24 @@ class ZiWeiEngine:
         # 1. 執行長與格局審計 (CEO Audit)
         ceo_data = self.get_ceo_audit()
         
-        # 2. 全宮位動態飛星 (Part 2)
+        # 2. 先天格局分布 (Innate Potential) - [NEW Layer]
+        innate_dist = self.get_innate_distribution()
+        
+        # 3. 全宮位動態飛星 (Relational Dynamics)
         all_flying = self.fly_all_palaces()
         
-        # 3. 核心部門審計 (Part 1 - Wealth/Property)
+        # 4. 核心部門審計 (Part 1 - Wealth/Property)
         wealth_data = all_flying.get("財帛宮", {})
-        self_trans = []
-        if wealth_data.get("lu_dest") == "財帛宮": self_trans.append(self.SELF_TRANS_LU)
-        if wealth_data.get("ji_dest") == "財帛宮": self_trans.append(self.SELF_TRANS_JI)
+        property_data = all_flying.get("田宅宮", {})
+        
+        # Check for Innate Stars in Wealth/Property
+        innate_wealth = [f"{t}: {s['star']}" for t, s in innate_dist["stars"].items() if s["palace"] == "財帛宮"]
+        innate_property = [f"{t}: {s['star']}" for t, s in innate_dist["stars"].items() if s["palace"] == "田宅宮"]
 
         # Audit Object
         audit = {
             "ceo": ceo_data,
+            "innate": innate_dist,
             "patterns": {
                 "talent": ceo_data["description"],
                 "direction": "根據『命宮』飛星軌跡：" + (all_flying.get("命宮", {}).get("collision", "執行力均衡。")),
@@ -251,6 +293,7 @@ class ZiWeiEngine:
             },
             "wealth": {
                 "source": "財帛宮",
+                "innate_setup": innate_wealth if innate_wealth else ["此部門無先天四化點綴，純看後天經營。"],
                 "lu_dest": wealth_data.get("lu_dest"),
                 "lu_why": f"此為財帛宮宮干『{wealth_data.get('stem')}』使『{wealth_data.get('lu_star')}』化祿入『{wealth_data.get('lu_dest')}』，代表資源與機會的主動流向。",
                 "lu_how": self.get_audit_how("祿", wealth_data.get("lu_dest")),
@@ -259,20 +302,20 @@ class ZiWeiEngine:
                 "ji_why": f"此為財帛宮宮干『{wealth_data.get('stem')}』使『{wealth_data.get('ji_star')}』化忌入『{wealth_data.get('ji_dest')}』，代表壓力與阻礙的收斂點。",
                 "ji_how": self.get_audit_how("忌", wealth_data.get("ji_dest")),
                 "ji_conclusion": f"風控目標：{self.get_audit_conclusion('忌', wealth_data.get('ji_dest'))}",
-                "self_trans": self_trans,
                 "collision": wealth_data.get("collision")
             },
             "property": {
                 "source": "田宅宮",
-                "lu_dest": all_flying.get("田宅宮", {}).get("lu_dest"),
-                "lu_why": f"此為田宅宮宮干『{all_flying.get('田宅宮', {}).get('stem')}』使『{all_flying.get('田宅宮', {}).get('lu_star')}』化祿入『{all_flying.get('田宅宮', {}).get('lu_dest')}』，代表資產保值與擴張的底氣。",
-                "lu_how": self.get_audit_how("祿", all_flying.get("田宅宮", {}).get("lu_dest")),
-                "lu_conclusion": f"守成方向：{self.get_audit_conclusion('祿', all_flying.get('田宅宮', {}).get('lu_dest'))}",
-                "ji_dest": all_flying.get("田宅宮", {}).get("ji_dest"),
-                "ji_why": f"此為田宅宮宮干『{all_flying.get('田宅宮', {}).get('stem')}』使『{all_flying.get('田宅宮', {}).get('ji_star')}』化忌入『{all_flying.get('田宅宮', {}).get('ji_dest')}』，代表潛在的漏水點與守財壓力。",
-                "ji_how": self.get_audit_how("忌", all_flying.get("田宅宮", {}).get("ji_dest")),
-                "ji_conclusion": f"資產防護：{self.get_audit_conclusion('忌', all_flying.get('田宅宮', {}).get('ji_dest'))}",
-                "collision": all_flying.get("田宅宮", {}).get("collision")
+                "innate_setup": innate_property if innate_property else ["此部門無先天四化點綴，純看資產配置。"],
+                "lu_dest": property_data.get("lu_dest"),
+                "lu_why": f"此為田宅宮宮干『{property_data.get('stem')}』使『{property_data.get('lu_star')}』化祿入『{property_data.get('lu_dest')}』，代表資產保值與擴張的底氣。",
+                "lu_how": self.get_audit_how("祿", property_data.get("lu_dest")),
+                "lu_conclusion": f"守成方向：{self.get_audit_conclusion('祿', property_data.get('lu_dest'))}",
+                "ji_dest": property_data.get("ji_dest"),
+                "ji_why": f"此為田宅宮宮干『{property_data.get('stem')}』使『{property_data.get('ji_star')}』化忌入『{property_data.get('ji_dest')}』，代表潛在的漏水點與守財壓力。",
+                "ji_how": self.get_audit_how("忌", property_data.get("ji_dest")),
+                "ji_conclusion": f"資產防護：{self.get_audit_conclusion('忌', property_data.get('ji_dest'))}",
+                "collision": property_data.get("collision")
             },
             "strategic_conclusions": self.get_strategic_conclusions(all_flying)
         }
@@ -369,24 +412,27 @@ class ZiWeiEngine:
             """
             
             # 構造問題
-            focus_text = f"目前重點審計宮位：{focused_palace}" if focused_palace else "進行全公司整體財務健康審計"
             prompt = f"""
             {context}
             
             根據以下命盤數據進行深度審計：
             執行長主星：{audit_data['ceo']['star']}
-            特質描述：{audit_data['ceo']['description']}
             
-            財務部門數據：
+            1. 先天格局資產 (Innate Potential)：
+            生年天干：{audit_data['innate']['stem']}
+            先天祿位：{audit_data['innate']['stars']['祿']['star']} 位於 {audit_data['innate']['stars']['祿']['palace']}
+            先天忌位：{audit_data['innate']['stars']['忌']['star']} 位於 {audit_data['innate']['stars']['忌']['palace']}
+            
+            2. 財務對待關係 (Relational Dynamics)：
             - 業務部(財帛)化祿入：{audit_data['wealth']['lu_dest']} | 化忌入：{audit_data['wealth']['ji_dest']}
             - 金庫部(田宅)化祿入：{audit_data['property']['lu_dest']} | 化忌入：{audit_data['property']['ji_dest']}
             
             {focus_text}
             
             請提供以下內容（使用繁體中文，語氣需專業且具備 CEO 戰略高度）：
-            1. 🔍 關係結論：總結此宮位飛星對公司的主要影響。
-            2. 📊 深度效應：分析主星特質在該飛星路徑下的動態變化。
-            3. 🛡️ 戰略解法：提供 2-3 條具體的「陽升陰降」的操作建議，幫助 CEO 化解風險。
+            1. 📈 先天資產審計：分析「先天格局」帶來的底層天賦與資源點。
+            2. 🔄 宮位對待關係：總結當前「飛星」形成的部門互動關係（誰影響誰，如何影響）。
+            3. 🛡️ 戰略解法：提供具體的「陽升陰降」的操作建議。
             """
             
             response = client.models.generate_content(
