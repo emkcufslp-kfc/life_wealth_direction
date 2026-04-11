@@ -1,4 +1,4 @@
-from iztro import astro
+from iztro_py import astro
 import json
 import os
 import base64
