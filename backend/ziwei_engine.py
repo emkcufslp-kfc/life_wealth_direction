@@ -1,8 +1,8 @@
-from iztro_py import astro
+from iztro import astro
 import json
 import os
 import base64
-import google.generativeai as genai
+from google import genai
 
 class ZiWeiEngine:
     """
@@ -339,15 +339,17 @@ class ZiWeiEngine:
 
     def get_ai_audit(self, audit_data, focused_palace=None, api_key=None):
         """
-        [NEW] 使用 Gemini 3 Flash 進行 AI 執行長深度審計
+        [NEW] 使用 Gemini 3 Flash 進行 AI 執行長深度審計 (google-genai SDK)
         """
         if not api_key:
             return "❌ 未偵測到 API Key。請在 Streamlit Secrets 或設定中配置 GOOGLE_API_KEY。"
 
         try:
-            genai.configure(api_key=api_key)
-            # Using 'gemini-3-flash' as requested by the user
-            model = genai.GenerativeModel('gemini-3-flash')
+            # Using the new google-genai SDK
+            client = genai.Client(api_key=api_key)
+            
+            # Using 'gemini-3-flash-preview' as confirmed by current standards
+            model_id = "gemini-3-flash-preview"
             
             # 構造上下文 (從知識庫文件中提取的核心邏輯)
             context = """
@@ -362,7 +364,7 @@ class ZiWeiEngine:
             星性參考：
             - 紫微：統籌全局 / 天機：預測趨勢 / 太陽：公眾影響 / 武曲：精算風險
             - 天同：營造和諧 / 廉貞：危機公關 / 天府：穩健守成 / 太陰：關注細節
-            - 貪狼：挖掘欲望 / 巨門：深度剖析 / 天相：協調利益 / 天梁：庇蔭傳承
+            - 貪狼：挖掘欲望 / 巨門：深度剖析 / 天相：協調利益 / 天梁：庇蔭傳傳
             - 七殺：鎖定目標 / 破軍：打破常規
             """
             
@@ -387,7 +389,10 @@ class ZiWeiEngine:
             3. 🛡️ 戰略解法：提供 2-3 條具體的「陽升陰降」的操作建議，幫助 CEO 化解風險。
             """
             
-            response = model.generate_content(prompt)
+            response = client.models.generate_content(
+                model=model_id,
+                contents=prompt
+            )
             return response.text
         except Exception as e:
             return f"⚠️ AI 審計過程發生錯誤：{str(e)}"
