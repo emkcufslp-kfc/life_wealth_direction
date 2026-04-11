@@ -3,11 +3,12 @@ import json
 import os
 import base64
 from google import genai
+from google.genai import types
 
 class ZiWeiEngine:
     """
-    紫微斗數飛星計算引擎 (Institutional Flagship v4.3)
-    核心：將「化忌」演繹為戰略防火牆，整合 Gemini AI 首席審計官。
+    紫微斗數飛星計算引擎 (Institutional Flagship v5.3)
+    核心：深度整合「欽天派、飛星派、紫雲先生」專業理財框架與 Gemini AI。
     """
     
     SI_HUA_MAP = {
@@ -31,42 +32,6 @@ class ZiWeiEngine:
         "spiritPalace": "福德宮", "surfacePalace": "疾厄宮"
     }
 
-    # --- TACTICAL RISK NARRATIVES ---
-    RISK_STAR_NARRATIVES = {
-        "武曲": "鐵腕財務長遇危機：資金斷鍊、周轉不靈，重資產易貶值。",
-        "太陽": "跨國CEO面臨波及：名氣大而實質虧損，海外投資地雷。",
-        "廉貞": "法務長踩紅線：求財牽涉法規糾紛，勿遊走灰色地帶。",
-        "太陰": "房產大亨資產凍結：不動產套牢、產權不清或租金回收難。",
-        "天機": "數據分析師失誤：程式交易或決策Bug，頻繁進出導致手續費損失。",
-        "天同": "享樂主義天真陷阱：過度理想化，盲目投資夕陽產業或合夥欺騙。",
-        "貪狼": "投機客泡沫破裂：數位資產被駭、高槓桿爆倉，受困於貪念。",
-        "巨門": "公關災難與合約漏洞：錯誤資訊誤判，聽信內線消息導致金錢損失。",
-        "文昌": "會計信用破產：票據糾紛與金融業障，最忌支票不兌現或惡意倒帳。",
-        "文曲": "會計信用破產：票據糾紛與金融業障，最忌支票不兌現或惡意倒帳。"
-    }
-
-    RISK_PALACE_NARRATIVES = {
-        "命宮": "資產負增長防護位：凡事親力親為，賺錢辛苦且心理壓力大。",
-        "兄弟宮": "資源收縮黑洞：現金位受損，極易產生借貸風險，有去無回。",
-        "夫妻宮": "公關形象受阻：配偶或外部人脈造成財務拖累，需劃清界線。",
-        "子女宮": "合夥投資漏洞：合夥生意易產生窟窿，資金向外投放易石沉大海。",
-        "財帛宮": "現金斷路節點：自化忌主錢財留不住，情緒性消費導致防火牆失效。",
-        "疾厄宮": "實體營運重擔：投資受限於體力或店業高昂租金，過勞獲利薄。",
-        "遷移宮": "外部際遇受困：出外發展阻礙多，海外資產容易發生意外損耗。",
-        "交友宮": "眾籌群眾地雷：被外人坑陷，協助他人反遭財務拖累。",
-        "事業宮": "持續投入套牢區：資金過度卡在本業擴張，隨時面臨斷流風險。",
-        "田宅宮": "資產流動性陷阱：資金全數被房產套牢，資產變成磚頭，流動性差。",
-        "福德宮": "精神性財務焦慮：福報位受損，因焦慮胡亂投機導致祖蔭消散。",
-        "父母宮": "大型機構防火牆：與政府、長輩或銀行發生信用糾紛，貸款受阻。"
-    }
-
-    LUK_STAR_NARRATIVES = {
-        "天同": "被動人生福星：輕鬆獲利。","天梁": "特許蔭庇財：穩健長者財。",
-        "天機": "技術資訊差：短線智謀。","太陽": "能源媒體財：跨國名氣。",
-        "巨門": "口才顧問財：數據洞察。","武曲": "硬通貨正財：金融重資產。",
-        "太陰": "地產租金財：價值投資。","天府": "庫存管理財：權值儲備。"
-    }
-
     TRAD_STAR_MAP = {"太阳":"太陽","太阴":"太陰","天机":"天機","廉贞":"廉貞","贪狼":"貪狼","巨门":"巨門","武曲":"武曲","天同":"天同","破军":"破軍","天梁":"天梁","紫微":"紫微","天府":"天府","天相":"天相","七杀":"七殺","文昌":"文昌","文曲":"文曲","左辅":"左輔","右弼":"右弼","禄存":"祿存","擎羊":"擎羊","陀罗":"陀羅","火星":"火星","铃星":"鈴星","地空":"地空","地劫":"地劫"}
 
     CEO_IMAGES = {
@@ -84,6 +49,7 @@ class ZiWeiEngine:
         if is_lunar: self.chart = astro.by_lunar(year, month, day, hour_index, False, gender)
         else: self.chart = astro.by_solar(date_str, hour_index, gender)
         self.palaces = self.chart.palaces
+        self.gender = gender
 
     def get_palace_by_label(self, label):
         for p in self.palaces:
@@ -99,8 +65,7 @@ class ZiWeiEngine:
     def get_birth_year_stem(self):
         stems = "甲乙丙丁戊己庚辛壬癸"
         y = int(self.chart.solar_date.split("-")[0])
-        s = stems[(y - 4) % 10]
-        return s
+        return stems[(y - 4) % 10]
 
     def get_innate_distribution(self):
         stem = self.get_birth_year_stem()
@@ -109,10 +74,17 @@ class ZiWeiEngine:
         for k, v in trans.items(): dist[k] = {"star": v, "palace": self.find_star_location(v)}
         return {"stem": stem, "stars": dist}
 
-    def get_ceo_audit(self):
-        mp = self.get_palace_by_label("命宮")
-        star = self.TRAD_STAR_MAP.get(mp.major_stars[0].translate_name(), "紫微") if mp.major_stars else "紫微"
-        return {"star": star, "image": self.CEO_IMAGES.get(star, "zi_wei_emperor_1774971867916.png"), "description": f"具備【{star}】核心決策素質。"}
+    def detect_self_transformation(self, palace_label):
+        p = self.get_palace_by_label(palace_label)
+        if not p: return []
+        sk = p.heavenly_stem[:3].lower()
+        stem = {"jia":"甲","yi":"乙","bing":"丙","ding":"丁","wu":"戊","ji":"己","geng":"庚","xin":"辛","ren":"壬","gui":"癸"}.get(sk, "甲")
+        trans = self.SI_HUA_MAP.get(stem)
+        all_s = [self.TRAD_STAR_MAP.get(s.translate_name(), s.translate_name()) for s in p.major_stars + p.minor_stars + p.adjective_stars]
+        results = []
+        for k, s_target in trans.items():
+            if s_target in all_s: results.append(f"自化{k}({s_target})")
+        return results
 
     def fly_all_palaces(self):
         res = {}
@@ -123,45 +95,77 @@ class ZiWeiEngine:
             sk = p.heavenly_stem[:3].lower()
             stem = {"jia":"甲","yi":"乙","bing":"丙","ding":"丁","wu":"戊","ji":"己","geng":"庚","xin":"辛","ren":"壬","gui":"癸"}.get(sk, "甲")
             trans = self.SI_HUA_MAP.get(stem)
-            res[l] = {
-                "stem": stem, "lu_star": trans["祿"], "lu_dest": self.find_star_location(trans["祿"]),
-                "ji_star": trans["忌"], "ji_dest": self.find_star_location(trans["忌"]),
-                "collision": f"資產向『{self.find_star_location(trans['祿'])}』投放能量，壓力在『{self.find_star_location(trans['忌'])}』構築防火牆。"
-            }
+            res[l] = { "stem": stem, "lu_star": trans["祿"], "lu_dest": self.find_star_location(trans["祿"]), "ji_star": trans["忌"], "ji_dest": self.find_star_location(trans["忌"]), "self": self.detect_self_transformation(l) }
         return res
 
     def get_wealth_audit(self):
-        ceo, innate, flying = self.get_ceo_audit(), self.get_innate_distribution(), self.fly_all_palaces()
+        mp = self.get_palace_by_label("命宮")
+        ceo_star = self.TRAD_STAR_MAP.get(mp.major_stars[0].translate_name(), "紫微") if mp.major_stars else "紫微"
+        innate, flying = self.get_innate_distribution(), self.fly_all_palaces()
         res = {}
         for name in ["命宮", "財帛宮", "田宅宮"]:
             fd = flying.get(name, {})
-            l1 = [{"star": f"{s['star']}(生年{t})", "comment": "先天重要資本與定力。"} for t, s in innate["stars"].items() if s["palace"] == name]
-            res[name] = {
-                "layer1": {"stars": l1, "empty_msg": "無生年四化，純看後天飛伏。"},
-                "layer2": {
-                    "lu": {"dest": fd.get("lu_dest"), "why": self.LUK_STAR_NARRATIVES.get(fd.get("lu_star"), "常態盈餘模式。"), "how": f"導向『{fd.get('lu_dest')}』實現獲利。", "strategy": "資源投放"},
-                    "ji": {"dest": fd.get("ji_dest"), "why": self.RISK_STAR_NARRATIVES.get(fd.get("ji_star"), "不透明風險。"), "how": f"於『{fd.get('ji_dest')}』{self.RISK_PALACE_NARRATIVES.get(fd.get('ji_dest'), '構設置防線')}", "strategy": "構築防火牆"},
-                    "summary": fd.get("collision")
-                }
-            }
-        return {"ceo": ceo, "innate": innate, "soul": res["命宮"], "wealth": res["財帛宮"], "property": res["田宅宮"], "conclusions": ["【穩健發展】建議按既定戰略擴張。"]}
-
-    def get_innate_audit(self):
-        innate = self.get_innate_distribution()
-        profiles = []
-        for t, s in innate["stars"].items():
-            profiles.append({
-                "header": f"先天{s['star']}化{t}位於『{s['palace']}』 | 戰略：{self.RISK_PALACE_NARRATIVES.get(s['palace'], '重點防護位')}",
-                "palace_def": f"{s['palace']}代表財富配置底層。(參閱研報第十章)",
-                "meaning": "代表「我」與生俱來的資源與福報。", "motivation": "追求絕對穩定與增長。", "impact": "資產累積路徑清晰。"
-            })
-        return profiles
+            l1 = [{"star": f"{s['star']}(生年{t})", "comment": "核心資本。"} for t, s in innate["stars"].items() if s["palace"] == name]
+            res[name] = { "layer1": {"stars": l1}, "layer2": {"lu": {"dest": fd.get("lu_dest")}, "ji": {"dest": fd.get("ji_dest")}, "self": fd.get("self", [])} }
+        return {"ceo": {"star": ceo_star, "image": self.CEO_IMAGES.get(ceo_star, "zi_wei_emperor.png")}, "innate": innate, "soul": res["命宮"], "wealth": res["財帛宮"], "property": res["田宅宮"], "flying": flying}
 
     def get_ai_audit(self, audit_data, api_key):
         client = genai.Client(api_key=api_key)
-        prompt = f"你是「人生股份有限公司」首席戰略審計官。根據數據分析 CEO:{audit_data['ceo']['star']}，生年:{audit_data['innate']['stem']}，核心部門:{json.dumps([audit_data['soul'], audit_data['wealth'], audit_data['property']], ensure_ascii=False)}。請以專業總裁思維，執行「陽升陰降」法則，提供一份深度風控與資產配置建議。繁體中文，專業威信。"
-        response = client.models.generate_content(model="gemini-2.0-flash", contents=prompt)
-        return response.text
+        # Construct Detailed AI Context based on '紫微專業提示詞.md'
+        ctx = f"""
+        【審計對象資訊】
+        - 性別：{self.gender}
+        - 出生日期：{self.chart.solar_date} (國曆)
+        - 農曆日期：{self.chart.chinese_date}
+        - 執行長 (CEO)：{audit_data['ceo']['star']}
+        
+        【先天財富基因 (Birth DNA)】
+        - 生年干：{audit_data['innate']['stem']}
+        - 生年四化明確位：
+          * 祿：{audit_data['innate']['stars']['祿']['star']} ➔ {audit_data['innate']['stars']['祿']['palace']}
+          * 權：{audit_data['innate']['stars']['權']['star']} ➔ {audit_data['innate']['stars']['權']['palace']}
+          * 科：{audit_data['innate']['stars']['科']['star']} ➔ {audit_data['innate']['stars']['科']['palace']}
+          * 忌：{audit_data['innate']['stars']['忌']['star']} ➔ {audit_data['innate']['stars']['忌']['palace']}
+        
+        【核心財庫結構 (Wealth-Vault Triad)】
+        - 財帛宮 (交易部)：飛祿➔{audit_data['wealth']['layer2']['lu']['dest']} / 飛忌➔{audit_data['wealth']['layer2']['ji']['dest']} / 自化:{audit_data['wealth']['layer2']['self']}
+        - 田宅宮 (總財庫)：飛祿➔{audit_data['property']['layer2']['lu']['dest']} / 飛忌➔{audit_data['property']['layer2']['ji']['dest']} / 自化:{audit_data['property']['layer2']['self']}
+        - 兄弟宮 (現金流)：飛祿➔{audit_data['flying']['兄弟宮']['lu_dest']} / 飛忌➔{audit_data['flying']['兄弟宮']['ji_dest']} / 自化:{audit_data['flying']['兄弟宮']['self']}
+        
+        【外擴投資與合夥 (Investment)】
+        - 子女宮 (股票期貨部)：飛祿➔{audit_data['flying']['子女宮']['lu_dest']} / 飛忌➔{audit_data['flying']['子女宮']['ji_dest']} / 自化:{audit_data['flying']['子女宮']['self']}
+        
+        【理財心態與福報 (Mindset)】
+        - 福德宮 (決策潛意識)：飛祿➔{audit_data['flying']['福德宮']['lu_dest']} / 飛忌➔{audit_data['flying']['福德宮']['ji_dest']} / 自化:{audit_data['flying']['福德宮']['self']}
+        """
+
+        prompt = f"""
+        你是一位精通「欽天四化派」、「飛星派」及「紫雲先生理論」的「人生股份有限公司 (Life Inc.)」首席戰略審計官。
+        請根據以下精確的命盤數據執行深度審計。**嚴禁使用模糊模擬，僅限使用提供的固定數據**。
+
+        {ctx}
+
+        🏗️ 財富解析核心邏輯：
+        1. 祿隨忌走：分析生年祿(因)如何流向生年忌(果)，判斷財富終極歸宿。
+        2. 三位一體：評估 財帛、田宅、兄弟 之間的互動關係。
+        3. 自化洩能：分析自化對財運穩定性的負面影響。
+        4. 紫雲投資論：分析子女宮是否適合股票期貨或合夥操作。
+
+        最後，請給出三條具體的、可執行的「財富增長策略」。
+        繁體中文，專業、威信、冷靜。
+        """
+
+        try:
+            resp = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt,
+                config=types.GenerateContentConfig(safety_settings=[types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE")])
+            )
+            return resp.text
+        except Exception:
+            # Fallback to 1.5-flash
+            resp = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+            return resp.text
 
     def get_image_base64(self, path):
         if os.path.exists(path):
