@@ -302,6 +302,7 @@ if menu == "🚀 核心財務審計":
     is_lunar = st.sidebar.checkbox("是否為農曆日期", value=False)
 
     if st.sidebar.button("🚀 開始深度財務審計", use_container_width=True) or 'audit_data' in st.session_state:
+        try:
             # Force re-calculation logic (ensures migration to new logic)
             force_recalc = False
             if 'audit_data' in st.session_state:
