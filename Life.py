@@ -302,9 +302,11 @@ if menu == "🚀 核心財務審計":
     is_lunar = st.sidebar.checkbox("是否為農曆日期", value=False)
 
     if st.sidebar.button("🚀 開始深度財務審計", use_container_width=True) or 'audit_data' in st.session_state:
-        try:
-            # Force re-calculation if 'innate' key is missing (ensures migration to new logic)
-            force_recalc = 'audit_data' in st.session_state and 'innate' not in st.session_state.audit_data
+            # Force re-calculation logic (ensures migration to new logic)
+            force_recalc = False
+            if 'audit_data' in st.session_state:
+                if 'innate' not in st.session_state.audit_data:
+                    force_recalc = True
             
             if 'engine' not in st.session_state or st.sidebar.button("🔄 重新計算") or force_recalc:
                 st.session_state.engine = ZiWeiEngine(birth_date.year, birth_date.month, birth_date.day, birth_hour, is_lunar, gender)
