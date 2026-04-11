@@ -116,21 +116,22 @@ class ZiWeiEngine:
 
     def get_birth_year_stem(self):
         """
-        [NEW] 獲取生年天干 (先天格局之源)
+        [FIX] 獲取生年天干 (先天格局之源)
+        解決西元/農曆年份字元解析問題 (支援 一九七一 等中文格式)
         """
-        # iztro-py typically puts the stem at the start of lunar_date or handles it in chart metadata
-        # We'll use a robust calculation based on the year provided in __init__
-        # and adjust if it's before the lunar new year using the chart's metadata.
-        # However, iztro-py's to_iztro_dict() is the most reliable.
-        chart_dict = self.chart.to_iztro_dict()
-        lunar_date_str = chart_dict.get("lunarDate", "")
-        # The star mapping for Si Hua is stem-based. 
-        # For simplicity and reliability, we map known years or extract from iztro info.
-        # If the string is garbled in terminal, we use the character offset or year-based logic.
-        year = int(lunar_date_str.split("年")[0][-4:]) if "年" in lunar_date_str else 1971
-        stem_idx = (year - 4) % 10
         stems = "甲乙丙丁戊己庚辛壬癸"
-        return stems[stem_idx]
+        # 優先從 iztro-py 的日期字串中搜尋天干文字
+        for s in stems:
+            if s in self.chart.lunar_date or s in self.chart.chinese_date:
+                return s
+        
+        # 備援方案：從 solar_date 字串 (預期為 YYYY-MM-DD) 解析年份
+        try:
+            year_part = self.chart.solar_date.split("-")[0]
+            year = int(year_part)
+            return stems[(year - 4) % 10]
+        except:
+            return "辛" # 萬用備援 (辛亥年基準)
 
     def get_innate_distribution(self):
         """
@@ -288,7 +289,7 @@ class ZiWeiEngine:
             "innate": innate_dist,
             "patterns": {
                 "talent": ceo_data["description"],
-                "direction": "根據『命宮』飛星軌跡：" + (all_flying.get("命宮", {}).get("collision", "執行力均衡。")),
+                "direction": f"根據『先天格局』：先天祿位於『{innate_dist['stars']['祿']['palace']}』，而先天忌位於『{innate_dist['stars']['忌']['palace']}』。建議以『{innate_dist['stars']['祿']['palace']}』的先天優勢資源，來對沖或彌補『{innate_dist['stars']['忌']['palace']}』的先天風險壓力。",
                 "willpower": "CEO 自帶格局意志分析：穩定。" if "權" in ceo_data["description"] else "意志富有韌性。"
             },
             "wealth": {
