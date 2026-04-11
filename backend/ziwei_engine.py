@@ -117,21 +117,30 @@ class ZiWeiEngine:
     def get_birth_year_stem(self):
         """
         [FIX] 獲取生年天干 (先天格局之源)
-        解決西元/農曆年份字元解析問題 (支援 一九七一 等中文格式)
+        精準對齊 1971 辛亥年，並處理立春/農曆年前後位移。
         """
         stems = "甲乙丙丁戊己庚辛壬癸"
-        # 優先從 iztro-py 的日期字串中搜尋天干文字
-        for s in stems:
-            if s in self.chart.lunar_date or s in self.chart.chinese_date:
-                return s
         
-        # 備援方案：從 solar_date 字串 (預期為 YYYY-MM-DD) 解析年份
+        # 1. 從 solar_date (YYYY-MM-DD) 取得西元年份
         try:
-            year_part = self.chart.solar_date.split("-")[0]
-            year = int(year_part)
-            return stems[(year - 4) % 10]
+            year = int(self.chart.solar_date.split("-")[0])
         except:
-            return "辛" # 萬用備援 (辛亥年基準)
+            year = 1971
+            
+        # 2. 計算該年份對應的天干 (基準)
+        candidate_idx = (year - 4) % 10
+        candidate_stem = stems[candidate_idx]
+        
+        # 3. 驗證：如果 chinese_date 包含此天干，則確認為該年
+        # 否則可能是農曆年前出生，需往前推一年
+        if candidate_stem in self.chart.chinese_date:
+            return candidate_stem
+        else:
+            prev_stem = stems[(candidate_idx - 1) % 10]
+            if prev_stem in self.chart.chinese_date:
+                return prev_stem
+        
+        return candidate_stem # 最終備援
 
     def get_innate_distribution(self):
         """
