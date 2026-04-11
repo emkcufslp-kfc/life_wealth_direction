@@ -346,8 +346,8 @@ class ZiWeiEngine:
 
         try:
             genai.configure(api_key=api_key)
-            # Using 'gemini-1.5-flash-latest' for better stability and free tier access
-            model = genai.GenerativeModel('gemini-1.5-flash-latest')
+            # Using 'gemini-3-flash' as requested by the user
+            model = genai.GenerativeModel('gemini-3-flash')
             
             # 構造上下文 (從知識庫文件中提取的核心邏輯)
             context = """
