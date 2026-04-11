@@ -31,7 +31,6 @@ class ZiWeiEngine:
         "spiritPalace": "福德宮", "surfacePalace": "疾厄宮"
     }
 
-    # --- MEANINGFUL RISK DATABASE (CHAPTER 10) ---
     RISK_STAR_NARRATIVES = {
         "武曲": "鐵腕財務長遇危機：資金斷鍊、周轉不靈，重資產易貶值。",
         "太陽": "跨國CEO面臨波及：名氣大而實質虧損，海外投資地雷。",
@@ -60,7 +59,6 @@ class ZiWeiEngine:
         "父母宮": "大型機構防火牆：與政府、長輩或銀行發生信用糾紛，貸款受阻。"
     }
 
-    # --- LATEST LUK (LUCK) ENGINE ---
     LUK_STAR_NARRATIVES = {
         "天同": "被動人生福星：輕鬆獲利之財。", "天梁": "特許蔭庇財：穩健長者財。",
         "天機": "技術資訊差：短線智謀財。", "太陽": "能源媒體財：跨國名氣財。",
@@ -68,9 +66,8 @@ class ZiWeiEngine:
         "太陰": "地產租金財：女性消費財。", "天府": "庫存管理財：權值儲備財。"
     }
 
-    # (Previous configurations retained for consistency)
     TRAD_STAR_MAP = {
-        "太阳": "太陽", "太阴": "太陰", "天机": "天機", "廉贞": "廉貞", "贪狼": "貪狼", 
+        "太阳": "太陽", "太阴": "太陰", "天機": "天機", "廉贞": "廉貞", "贪狼": "貪狼", 
         "巨门": "巨門", "武曲": "武曲", "天同": "天同", "破军": "破軍", "天梁": "天梁", 
         "紫微": "紫微", "天府": "天府", "天相": "天相", "七杀": "七殺", "文昌": "文昌", 
         "文曲": "文曲", "左辅": "左輔", "右弼": "右弼", "禄存": "祿存", "祿存": "祿存",
@@ -147,7 +144,6 @@ class ZiWeiEngine:
     def get_wealth_audit(self):
         ceo, innate, flying = self.get_ceo_audit(), self.get_innate_distribution(), self.fly_all_palaces()
         res = {}
-        from ziwei_engine import ZiWeiEngine
         for name in ["命宮", "財帛宮", "田宅宮"]:
             fd = flying.get(name, {})
             l1 = []
@@ -155,7 +151,6 @@ class ZiWeiEngine:
                 if s["palace"] == name:
                     l1.append({"star": f"{s['star']}(生年{t})", "comment": "先天重要資本與定力。"})
             
-            # Meaningful Risk Synthesis
             ji_star = fd.get("ji_star", "")
             ji_dest = fd.get("ji_dest", "")
             star_warn = self.RISK_STAR_NARRATIVES.get(ji_star, "戰略不透明風險。")
@@ -176,12 +171,9 @@ class ZiWeiEngine:
         return {"ceo": ceo, "innate": innate, "soul": res["命宮"], "wealth": res["財帛宮"], "property": res["田宅宮"], "conclusions": ["【穩健發展】建議按既定戰略擴張。"]}
 
     def get_innate_audit(self):
-        # Implementation from previous turns... (omitted for brevity but assumed present)
-        import backend.ziwei_engine as engine
         profiles = []
         innate = self.get_innate_distribution()
         for t, s in innate["stars"].items():
-            # (Fetching detailed bits from INNATE_RICH_DATABASE...)
             p_data = self.RISK_PALACE_NARRATIVES.get(s["palace"], "資產管理關鍵位。")
             profiles.append({
                 "header": f"先天{s['star']}化{t}位於『{s['palace']}』 | 戰略地位：{p_data}",
@@ -213,3 +205,38 @@ class ZiWeiEngine:
                 "major_stars": ma, "sha_stars": sh, "lucky_stars": lk, "wealth_stars": wl
             }
         return grid
+
+    def get_ai_audit(self, audit_data, api_key):
+        """
+        首席戰略審計官 (Gemini AI) 深度分析整合。
+        使用「人生股份有限公司」與「研報第十章」風控框架。
+        """
+        client = genai.Client(api_key=api_key)
+        prompt = f"""
+        你是一位身價百億、專精於紫微戰略的「人生股份有限公司 (Life Inc.)」首席戰略審計官。
+        請根據以下審計數據，為 CEO 提供一份極高深度的財務風控與戰略規劃報告：
+
+        【審計數據摘要】
+        - CEO 部門：{audit_data['ceo']['star']} ({audit_data['ceo']['description']})
+        - 先天資本 (Si Hua)：{audit_data['innate']['stem']}年生，包含 {json.dumps(audit_data['innate']['stars'], ensure_ascii=False)}
+        - 核心部門審計 (Layer 2)：
+            * 命宮 (決策部)：{json.dumps(audit_data['soul']['layer2'], ensure_ascii=False)}
+            * 財帛宮 (業務部)：{json.dumps(audit_data['wealth']['layer2'], ensure_ascii=False)}
+            * 田宅宮 (金庫部)：{json.dumps(audit_data['property']['layer2'], ensure_ascii=False)}
+
+        【要求與框架】
+        1. 使用繁體中文，語氣需極具專業威信且具備總裁思維。
+        2. 嚴格執行「研報第十章：陽升陰降」法則：分析資源應該導向哪裡，以及在哪裡構築「財務防火牆」。
+        3. 針對「化忌 (風險收斂)」宮位提供具體的避險與保護策略，而非宿命論的否定。
+        4. 報告分為三大部分：
+           (A) 戰略勢能分析 (Macro Momentum)
+           (B) 核心部門風控預警 (Critical Pillar Risk)
+           (C) 年度/十年資產配置建議 (Asset Allocation)
+        
+        5. 不要廢話，直接進入核心戰略判斷。
+        """
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt,
+        )
+        return response.text
