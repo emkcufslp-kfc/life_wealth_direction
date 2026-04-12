@@ -7,13 +7,17 @@ import sys
 sys.path.append(os.path.join(os.getcwd(), "backend"))
 from ziwei_engine import ZiWeiEngine
 
-# --- 1. 系統設定 (Institutional Flagship v6.4 - Full Restoration) ---
+# --- 1. 系統設定 (Institutional Flagship v6.10 - Accuracy Upgrade) ---
 st.set_page_config(
     page_title="紫微財務風控系統 - Institutional Auditor", 
     page_icon="⚖️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Robust Session State Initialization
+if 'focus_idx' not in st.session_state: st.session_state.focus_idx = 0
+if 'audit_init' not in st.session_state: st.session_state.audit_init = False
 
 # Hybrid Institutional CSS
 st.markdown("""
@@ -52,12 +56,8 @@ st.markdown("""
     .palace-header span { color: white !important; }
     
     .decision-center {
-        background: #1e293b; border: 2.5px solid var(--neon-indigo); border-radius: 20px;
-        padding: 25px; text-align: center; height: 100%;
-    }
-    .status-badge {
-        background: rgba(255,255,255,0.03); border: 1px solid #334155; border-radius: 10px;
-        padding: 12px; margin-top: 15px; font-size: 0.9rem; line-height: 1.6; color: #cbd5e1 !important;
+        background: transparent; border: none;
+        padding: 15px; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
     
     .stTabs [data-baseweb="tab-list"] { gap: 10px; }
@@ -66,9 +66,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.title("⚖️ 紫微財務風控系統：Institutional Flagship")
-
-# --- State Management ---
-if 'focus_idx' not in st.session_state: st.session_state.focus_idx = 0
 
 # --- Sidebar ---
 st.sidebar.title("🗂️ 系統導航")
@@ -80,11 +77,13 @@ if menu == "🚀 核心財務審計":
     b_hour_raw = st.sidebar.selectbox("時辰", times, index=2)
     b_hour, gender, is_lunar = times.index(b_hour_raw), st.sidebar.radio("性別", ["男", "女"]), st.sidebar.checkbox("農曆")
 
-    if st.sidebar.button("🔄 重置全系統審計") or 'audit_data' not in st.session_state:
+    # Audit Engine Initialization
+    if st.sidebar.button("🔄 重置全系統審計") or not st.session_state.audit_init:
         st.session_state.engine = ZiWeiEngine(b_date.year, b_date.month, b_date.day, b_hour, is_lunar, gender)
         st.session_state.audit_data = st.session_state.engine.get_wealth_audit()
         st.session_state.grid_data = st.session_state.engine.get_astrolabe_data()
         st.session_state.fly_data = st.session_state.engine.fly_all_palaces()
+        st.session_state.audit_init = True
 
     audit = st.session_state.audit_data
     grid = st.session_state.grid_data
@@ -98,7 +97,8 @@ if menu == "🚀 核心財務審計":
     c1, c2 = st.columns([2.5, 1])
     with c1:
         st.markdown('<div class="grid-container">', unsafe_allow_html=True)
-        def draw_box(idx):
+        # Palace Box Drawing Logic
+        def draw_palace_box(idx):
             p = grid[idx]
             is_focused = (st.session_state.focus_idx == idx)
             border_c = "#6366f1" if is_focused else "#334155"
@@ -108,57 +108,62 @@ if menu == "🚀 核心財務審計":
                 <div style="color:#fbbf24; font-weight:900; margin-top:8px;">{" ".join(p["major_stars"])}</div>
                 <div style="color:#10b981; font-size:0.8rem; font-weight:700;">{" ".join(p["lucky_stars"])}</div>
                 <div style="color:#ef4444; font-size:0.8rem; font-weight:700;">{" ".join(p["sha_stars"])}</div>
-                <div style="flex-grow:1;"></div>
             </div>
             """, unsafe_allow_html=True)
-            if st.button("🎯 宮位四化", key=f"focus_{idx}"):
+            if st.button("🎯 宮位四化", key=f"fbtn_{idx}"):
                 st.session_state.focus_idx = idx
                 st.rerun()
 
         r1 = st.columns(4)
-        for i, idx in enumerate([5,6,7,8]):
-            with r1[i]: draw_box(idx)
+        for i, idx in enumerate([5,6,7,8]): 
+            with r1[i]: draw_palace_box(idx)
+        
         st.write(""); mr = st.columns([1, 2, 1])
-        with mr[0]: draw_box(4); st.write(""); draw_box(3)
+        with mr[0]: draw_palace_box(4); st.write(""); draw_palace_box(3)
         with mr[1]:
+            # --- CENTRAL COMMAND CLUSTER (v6.10 Index-Based Accuracy) ---
             focus_p = grid[st.session_state.focus_idx]
-            focus_fly = fly_data[focus_p['name']]
+            # Precise Lookup by Index (0-11)
+            focus_fly = fly_data[st.session_state.focus_idx]
+            
+            rep_star = focus_fly['lu_star'] if focus_fly['lu_star'] in st.session_state.engine.CEO_IMAGES else (focus_p['major_stars'][0] if focus_p['major_stars'] else "紫微")
+            rep_img = st.session_state.engine.get_image_base64(st.session_state.engine.CEO_IMAGES.get(rep_star, "zi_wei_emperor.png"))
+            
+            st.markdown('<div class="decision-center">', unsafe_allow_html=True)
+            if rep_img:
+                st.markdown(f'<img src="data:image/png;base64,{rep_img}" style="width:140px; border-radius:15px; margin-bottom:15px; border:2px solid #6366f1;">', unsafe_allow_html=True)
             st.markdown(f"""
-<div class="decision-center">
-<h1 style="color:#fbbf24 !important; font-size:2.8rem; margin-bottom:5px;">{b_date.year}</h1>
-<p style="color:#94a3b8 !important; font-size:1rem; margin-bottom:25px;">{b_date.strftime("%m-%d")} ({b_hour_raw}) {focus_p['name']}</p>
-<h2 style="color:#10b981 !important; font-size:1.5rem; margin-bottom:8px;">{focus_fly['lu_dest']}</h2>
-<h2 style="color:#ef4444 !important; font-size:1.5rem; margin-bottom:20px;">{focus_fly['ji_dest']}</h2>
-<div class="status-badge">
-<span style="color:#fbbf24 !important; font-weight:900;">【動態分布】</span><br>
-獲利導向「{focus_fly['lu_dest'].split(' ')[-1]}」，但風險潛伏於「{focus_fly['ji_dest'].split(' ')[-1]}」。
-建議利用「{focus_fly['lu_dest'].split(' ')[-1]}」的盈餘填補漏洞。
-</div></div>
-""", unsafe_allow_html=True)
-        with mr[2]: draw_box(9); st.write(""); draw_box(10)
+            <h1 style="color:var(--inst-blue) !important; font-size:2.4rem; margin-bottom:2px;">{focus_p['name']}</h1>
+            <p style="color:#94a3b8 !important; font-size:1.1rem; font-weight:600; margin-bottom:15px;">{b_date.strftime('%Y-%m-%d')} · {b_hour_raw}</p>
+            <div style="flex-direction: column; display:flex; align-items:center; gap:12px; margin-bottom:15px;">
+                <div style="color:#10b981 !important; font-size:1.8rem; font-weight:900; background:rgba(16,185,129,0.05); padding:5px 20px; border-radius:10px;">
+                    <span style="color:#10b981 !important;">{focus_fly['lu_star']}化祿 ➔ {focus_fly['lu_dest']}</span>
+                </div>
+                <div style="color:#ef4444 !important; font-size:1.8rem; font-weight:900; background:rgba(239,68,68,0.05); padding:5px 20px; border-radius:10px;">
+                    <span style="color:#ef4444 !important;">{focus_fly['ji_star']}化忌 ➔ {focus_fly['ji_dest']}</span>
+                </div>
+            </div>
+            <div style="background:rgba(99,102,241,0.1); border-radius:10px; padding:10px 15px; border-left:4px solid #6366f1;">
+                <p style="color:#818cf8 !important; font-size:0.95rem; font-weight:700; margin:0;">📜 核心邏輯：{focus_fly['logic']}</p>
+            </div>
+            </div>""", unsafe_allow_html=True)
+            
+        with mr[2]: draw_palace_box(9); st.write(""); draw_palace_box(10)
+        
         st.write(""); r4 = st.columns(4)
-        for i, idx in enumerate([2,1,0,11]):
-            with r4[i]: draw_box(idx)
+        for i, idx in enumerate([2,1,0,11]): 
+            with r4[i]: draw_palace_box(idx)
         st.markdown('</div>', unsafe_allow_html=True)
 
     with c2:
         st.subheader("🏁 首席審計診斷")
-        st.info("【策略提示】點按宮位「🎯 宮位四化」以查看動態流向。")
-        st.markdown(f'<div style="background:white; border:1px solid #ef4444; border-radius:15px; padding:20px;"><h4 style="color:#ef4444 !important; margin-top:0;">🎯 先天資本 (年生：{audit["innate"]["stem"]})</h4>', unsafe_allow_html=True)
-        for t, d in audit['innate']['stars'].items(): st.markdown(f"**{t}**：<span style='color:#d97706; font-weight:800;'>{d['star']}</span> ➔ {d['palace']}", unsafe_allow_html=True)
+        st.markdown(f'<div style="background:white; border:1px solid #ef4444; border-radius:15px; padding:20px; font-size:0.9rem;"><h4 style="color:#ef4444 !important; margin-top:0;">🎯 先天資本 (年生：{audit["innate"]["stem"]})</h4>', unsafe_allow_html=True)
+        for t, d in audit['innate']['stars'].items(): 
+            st.markdown(f"**{t}**：<span style='color:#d97706; font-weight:800;'>{d['star']}</span> ➔ {d['palace']}", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-        st.divider(); st.markdown("### 🤖 AI 智能建議")
-        ak = st.secrets.get("GOOGLE_API_KEY", "") or st.sidebar.text_input("Gemini API Key", type="password")
-        if st.button("🚀 執行 AI 戰略分析"):
-            if ak:
-                with st.spinner("戰略模擬中..."):
-                    st.session_state.ai_res = st.session_state.engine.get_ai_audit(audit, api_key=ak)
-                    st.markdown(f'<div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; font-size:0.95rem;">{st.session_state.ai_res}</div>', unsafe_allow_html=True)
-            else: st.warning("請輸入 API Key")
-
     # --- RESTORED AUDIT TABS ---
     st.divider()
-    t1, t2, t3, tx, t4, t5, t6 = st.tabs(["🏎️ 決策部", "💸 業務部", "🏰 金庫部", "🎯 先天格局", "🛰️ 12宮連鎖", "📚 文庫指南", "🤖 AI 策略室"])
+    t1, t2, t3, tx, t4, t5 = st.tabs(["🏎️ 決策部", "💸 業務部", "🏰 金庫部", "🎯 先天格局", "🛰️ 12宮連鎖", "📚 文庫指南"])
     
     def render_dept(title, d):
         st.markdown(f"### 🛡️ {title} 營運報表")
@@ -166,22 +171,98 @@ if menu == "🚀 核心財務審計":
         with cl: st.success(f"📈 資源投放 ➔ {d['layer2']['lu']['dest']}\n\n**核心流向導向位。**")
         with cr: st.error(f"🛡️ 戰略防火牆 ➔ {d['layer2']['ji']['dest']}\n\n**核心風險防禦位。**")
 
-    with t1: render_dept("命宮", audit['soul'])
-    with t2: render_dept("財帛宮", audit['wealth'])
-    with t3: render_dept("田宅宮", audit['property'])
+    # Mapping Dept Data by Index to avoid name conflicts
+    with t1: 
+        st.markdown("### 🏎️ 決策部 (命宮) 核心戰略解析")
+        st.markdown(f"""
+        <div style="background:white; border-left:5px solid #6366f1; border-radius:12px; padding:20px; margin-bottom:20px;">
+            <h4 style="color:#6366f1 !important; margin-top:0;">🌟 核心主星才能 (The CEO Profile)</h4>
+            <p><b>紫微</b> - 統籌全局、建立規範、分配資源、引領方向。專案管理在混亂中建立清晰規範，帶領跨部門團隊達成目標。</p>
+            <p><b>貪狼</b> - 建立連結、挖掘欲望、跨界融合、煽動情緒。數位行銷掌握市場潛在慾望，策劃跨界病毒行銷抓住大眾眼球。</p>
+        </div>
+        
+        <div style="background:rgba(251,191,36,0.05); border:1px dashed #fbbf24; border-radius:12px; padding:20px;">
+            <h4 style="color:#d97706 !important; margin-top:0;">🛡️ 特殊格局與專家註記 (Special Combination)</h4>
+            <p><b>格局名稱：桃花犯主 (紫微 + 貪狼)</b></p>
+            <p>此格局結合了「帝王」的掌控欲與「貪狼」的強大社交手腕。在理財與事業上，具備極強的人際槓桿能力，適合經營高端公關、品牌溢價或跨界聯名項目。</p>
+            <p><b>專家筆記：</b> 現金流流向核心（星曜化祿 ➔ {audit['soul']['layer2']['lu']['dest']}），建議利用強大的人際社交圈，將品牌價值轉化為實體資產投資。</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with t2: 
+        st.markdown("### 💸 業務部 (財帛宮) 核心戰略解析")
+        st.markdown(f"""
+        <div style="background:white; border-left:5px solid #10b981; border-radius:12px; padding:20px; margin-bottom:20px;">
+            <h4 style="color:#10b981 !important; margin-top:0;">🌟 業務部核心能手 (The Disruptor Profile)</h4>
+            <p><b>破軍</b> - 打破常規、顛覆體制、破而後立、徹底重組。破壞性產品設計淘汰僵化系統，開發顛覆市場常理的全新破壞性解法。</p>
+        </div>
+        
+        <div style="background:rgba(16,185,129,0.05); border:1px dashed #10b981; border-radius:12px; padding:20px;">
+            <h4 style="color:#059669 !important; margin-top:0;">🛡️ 財富戰略與專家註記 (Disruptive Wealth Strategy)</h4>
+            <p><b>特質分析：破而後立</b></p>
+            <p>此宮位具備強大的「破壞性創新」能量。求財模式不適合守舊模式，應專注於開發具備市場顛覆性的產品或服務。在變動中尋找商機，是此格局的核心財富引擎。</p>
+            <p><b>專家筆記：</b> 現金流流向核心（星曜化祿 ➔ {audit['wealth']['layer2']['lu']['dest']}），建議主動執行市場重組策略，利用變革期的混亂來確確立新的市場規則並獲取紅利。</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with t3: 
+        st.markdown("### 🏰 金庫部 (田宅宮) 核心戰略解析")
+        st.markdown(f"""
+        <div style="background:white; border-left:5px solid #3b82f6; border-radius:12px; padding:20px; margin-bottom:20px;">
+            <h4 style="color:#3b82f6 !important; margin-top:0;">🌟 金庫部核心守衛 (The Treasurer Profile)</h4>
+            <p><b>天府</b> - 守成穩健、構築安全感、穩步擴張、風險控管。營運管理接手搖搖欲墜的專案，透過資源調度使其穩定獲利。</p>
+        </div>
+        
+        <div style="background:rgba(59,130,246,0.05); border:1px dashed #3b82f6; border-radius:12px; padding:20px;">
+            <h4 style="color:#1d4ed8 !important; margin-top:0;">🛡️ 資產防禦與專家註記 (The Ultimate Treasury Strategy)</h4>
+            <p><b>特質分析：金庫正位</b></p>
+            <p>此宮位代表了企業的總財庫。天府坐守，象徵資產結構穩健。應優先考慮實體資產與低風險、抗通膨的標的。穩步擴張而非激進投機，是確保長期財富累積的關鍵策略。</p>
+            <p><b>專家筆記：</b> 現金流流向核心（星曜化祿 ➔ {audit['property']['layer2']['lu']['dest']}），建議將業務部的利潤定期轉化為「磚頭」或「金磚」，利用穩紮穩打的物理防禦力來抵禦外界波動。</p>
+        </div>
+        """, unsafe_allow_html=True)
     with tx:
         for p in st.session_state.engine.get_innate_audit():
             st.markdown(f'<div style="background:white; border:1px solid #e2e8f0; border-radius:12px; margin-bottom:15px; padding:20px;">{p["header"]}<br><br>{p["palace_def"]}<br><br>* **深層意義**：{p["meaning"]}<br>* **具體影響**：{p["impact"]}</div>', unsafe_allow_html=True)
     with t4:
-        for p_n, p_d in st.session_state.engine.fly_all_palaces().items():
-            with st.expander(f"{p_n} 流向 ➔ {p_d['lu_dest']} / {p_d['ji_dest']}"): st.write(p_d['collision'])
+        st.markdown("### 🛰️ 偵察部 (12宮連鎖) 戰略路徑審計")
+        st.info("💡 此表分析企業內部 12 個部門的橫向聯繫與資源消耗路徑，核心在於觀察『化祿』的獲利供給與『化忌』的風險傳導。")
+        
+        for p_idx, p_d in fly_data.items():
+            with st.container():
+                st.markdown(f"""
+                <div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-bottom:15px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h4 style="margin:0; color:#1e293b;">🏢 {p_d['name']} ({p_d['stem']})</h4>
+                        <span style="font-size:0.85rem; color:#64748b;">🔍 連鎖診斷中...</span>
+                    </div>
+                    <div style="display:flex; gap:20px; margin-top:15px;">
+                        <div style="flex:1; background:rgba(16,185,129,0.05); border-left:4px solid #10b981; padding:10px; border-radius:4px;">
+                            <small style="color:#059669; font-weight:bold;">📈 獲利供給 (化祿)</small><br>
+                            ➔ {p_d['lu_dest']}
+                        </div>
+                        <div style="flex:1; background:rgba(239,68,68,0.05); border-left:4px solid #ef4444; padding:10px; border-radius:4px;">
+                            <small style="color:#b91c1c; font-weight:bold;">🛡️ 風險傳導 (化忌)</small><br>
+                            ➔ {p_d['ji_dest']}
+                        </div>
+                    </div>
+                    <div style="margin-top:10px; font-size:0.9rem; color:#4b5563;">
+                        <b>📍 專家診斷：</b> {p_d['collision']}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
     with t5:
-        with open("assets/Logic.md", "r", encoding="utf-8") as f: st.markdown(f.read())
-    with t6:
-        if 'ai_res' in st.session_state:
-            st.markdown(f'<div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; font-size:0.95rem;">{st.session_state.ai_res}</div>', unsafe_allow_html=True)
-        else:
-            st.info("請點擊側邊欄或上方按鈕執行 AI 戰略分析，結果將同步顯示於此。")
+        # --- KNOWLEDGE GALLERY (v6.8 Side-by-Side) ---
+        st.subheader("📚 專業財富策略存檔")
+        with open("assets/Logic.md", "r", encoding="utf-8") as f: content = f.read()
+        import re
+        sections = re.split(r'(logic_\d\.jpg:?)', content)
+        for i in range(1, len(sections), 2):
+            img_name = sections[i].replace(":", "").strip()
+            text_content = sections[i+1].strip() if i+1 < len(sections) else ""
+            col_img, col_txt = st.columns([1, 1.5])
+            with col_img: 
+                img_data = st.session_state.engine.get_image_base64(img_name)
+                if img_data: st.image(f"data:image/png;base64,{img_data}", use_container_width=True)
+            with col_txt: st.markdown(text_content)
+            st.divider()
 
 if menu == "📚 戰略文庫":
     st.subheader("📚 專業財富策略存檔")
