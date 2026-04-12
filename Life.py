@@ -121,7 +121,10 @@ if menu == "🚀 核心財務審計":
                 st.session_state.focus_idx = idx
                 st.rerun()
 
-        r1 = st.columns(4); [with r1[i]: draw_box(idx) for i, idx in enumerate([5,6,7,8])]
+        r1 = st.columns(4)
+        for i, idx in enumerate([5,6,7,8]):
+            with r1[i]: draw_box(idx)
+
         st.write(""); mr = st.columns([1, 2, 1])
         with mr[0]: draw_box(4); st.write(""); draw_box(3)
         with mr[1]:
@@ -140,7 +143,10 @@ if menu == "🚀 核心財務審計":
 </div></div>
 """, unsafe_allow_html=True)
         with mr[2]: draw_box(9); st.write(""); draw_box(10)
-        st.write(""); r4 = st.columns(4); [with r4[i]: draw_box(idx) for i, idx in enumerate([2,1,0,11])]
+        st.write(""); r4 = st.columns(4)
+        for i, idx in enumerate([2,1,0,11]):
+            with r4[i]: draw_box(idx)
+
         st.markdown('</div>', unsafe_allow_html=True)
 
     with c2:
