@@ -152,8 +152,8 @@ if menu == "🚀 核心財務審計":
         if st.button("🚀 執行 AI 戰略分析"):
             if ak:
                 with st.spinner("戰略模擬中..."):
-                    res = st.session_state.engine.get_ai_audit(audit, api_key=ak)
-                    st.markdown(f'<div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; font-size:0.95rem;">{res}</div>', unsafe_allow_html=True)
+                    st.session_state.ai_res = st.session_state.engine.get_ai_audit(audit, api_key=ak)
+                    st.markdown(f'<div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; font-size:0.95rem;">{st.session_state.ai_res}</div>', unsafe_allow_html=True)
             else: st.warning("請輸入 API Key")
 
     # --- RESTORED AUDIT TABS ---
@@ -178,7 +178,10 @@ if menu == "🚀 核心財務審計":
     with t5:
         with open("assets/Logic.md", "r", encoding="utf-8") as f: st.markdown(f.read())
     with t6:
-        st.info("請點擊側邊欄或上方按鈕執行 AI 戰略分析，結果將同步顯示於此。")
+        if 'ai_res' in st.session_state:
+            st.markdown(f'<div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; font-size:0.95rem;">{st.session_state.ai_res}</div>', unsafe_allow_html=True)
+        else:
+            st.info("請點擊側邊欄或上方按鈕執行 AI 戰略分析，結果將同步顯示於此。")
 
 if menu == "📚 戰略文庫":
     st.subheader("📚 專業財富策略存檔")

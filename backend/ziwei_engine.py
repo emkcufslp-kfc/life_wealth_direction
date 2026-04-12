@@ -74,6 +74,24 @@ class ZiWeiEngine:
         for k, v in trans.items(): dist[k] = {"star": v, "palace": self.find_star_location(v)}
         return {"stem": stem, "stars": dist}
 
+    def get_innate_audit(self):
+        dist = self.get_innate_distribution()
+        meanings = {
+            "祿": {"m": "代表圓滿、資源集結、福報與增加。", "i": "主要財富流向位，建議以此宮位為戰略核心。"},
+            "權": {"m": "代表權力、主導、技術與競爭力。", "i": "專業技能展現位，適合在此宮位執行攻勢策略。"},
+            "科": {"m": "代表名聲、條理、斯文與貴人相助。", "i": "品牌價值與信譽位，適合長期穩健經營。"},
+            "忌": {"m": "代表欠債、執著、風險、變數與壓力。", "i": "重災區與防火牆位，嚴禁在此宮位進行高槓桿操作。"}
+        }
+        res = []
+        for t, d in dist["stars"].items():
+            res.append({
+                "header": f"【生年化{t} ➔ {d['star']} ({d['palace']})】",
+                "palace_def": f"這顆星曜在此宮位代表您一生中最核心的『{t}』之氣，具有天生的決定性影響。",
+                "meaning": meanings[t]["m"],
+                "impact": meanings[t]["i"]
+            })
+        return res
+
     def detect_self_transformation(self, palace_label):
         p = self.get_palace_by_label(palace_label)
         if not p: return []
