@@ -111,7 +111,7 @@ if menu == "🚀 核心財務審計":
                 <div style="flex-grow:1;"></div>
             </div>
             """, unsafe_allow_html=True)
-            if st.button("🎯 聚焦", key=f"focus_{idx}"):
+            if st.button("🎯 宮位四化", key=f"focus_{idx}"):
                 st.session_state.focus_idx = idx
                 st.rerun()
 
