@@ -104,16 +104,43 @@ class ZiWeiEngine:
             if s_target in all_s: results.append(f"自化{k}({s_target})")
         return results
 
+    def get_collision_diagnostic(self, p_label, lu_dest, ji_dest, innate_dist):
+        """核心碰撞診斷邏輯：分析飛星流向與生年主星的互動"""
+        rules = []
+        birth_lu_p = innate_dist["stars"]["祿"]["palace"]
+        birth_ji_p = innate_dist["stars"]["忌"]["palace"]
+        
+        if lu_dest == birth_ji_p: rules.append("祿入沖忌: 資源投入以補先天之缺，轉危為安之象。")
+        if ji_dest == birth_lu_p: rules.append("忌入沖祿: 先吉後兇，防備資源遭風險位沖抵。")
+        
+        self_trans = self.detect_self_transformation(p_label)
+        if self_trans: rules.append(f"宮位自化: {','.join(self_trans)}，能量外流須防損耗。")
+        
+        if not rules: rules.append("流向平穩: 按部就班，穩定經營。")
+        return " | ".join(rules)
+
     def fly_all_palaces(self):
         res = {}
         labels = ["命宮", "兄弟宮", "夫妻宮", "子女宮", "財帛宮", "疾厄宮", "遷移宮", "交友宮", "事業宮", "田宅宮", "福德宮", "父母宮"]
+        innate = self.get_innate_distribution()
         for l in labels:
             p = self.get_palace_by_label(l)
             if not p: continue
             sk = p.heavenly_stem[:3].lower()
             stem = {"jia":"甲","yi":"乙","bing":"丙","ding":"丁","wu":"戊","ji":"己","geng":"庚","xin":"辛","ren":"壬","gui":"癸"}.get(sk, "甲")
             trans = self.SI_HUA_MAP.get(stem)
-            res[l] = { "stem": stem, "lu_star": trans["祿"], "lu_dest": self.find_star_location(trans["祿"]), "ji_star": trans["忌"], "ji_dest": self.find_star_location(trans["忌"]), "self": self.detect_self_transformation(l) }
+            lu_dest = self.find_star_location(trans["祿"])
+            ji_dest = self.find_star_location(trans["忌"])
+            
+            res[l] = { 
+                "stem": stem, 
+                "lu_star": trans["祿"], 
+                "lu_dest": lu_dest, 
+                "ji_star": trans["忌"], 
+                "ji_dest": ji_dest, 
+                "self": self.detect_self_transformation(l),
+                "collision": self.get_collision_diagnostic(l, lu_dest, ji_dest, innate)
+            }
         return res
 
     def get_wealth_audit(self):
