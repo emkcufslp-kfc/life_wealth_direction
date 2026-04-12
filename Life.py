@@ -90,12 +90,18 @@ if menu == "🚀 核心財務審計":
             tc = "#8b5cf6" if p['name']=='命宮' else ("#059669" if p['name']=='財帛宮' else ("#d97706" if p['name']=='田宅宮' else "#1e293b"))
             st.markdown(f'<div class="palace-box" style="border-top:5px solid {tc};"><div class="palace-header" style="color:{tc};"><span>{p["name"]}</span> <span>{p["stem"]}</span></div><div style="color:#d97706; font-weight:800; margin-top:5px;">{" ".join(p["major_stars"])}</div><div style="color:#15803d; font-size:0.8rem; font-weight:700;">{" ".join(p["lucky_stars"])} {" ".join(p["wealth_stars"])}</div><div style="color:#dc2626; font-size:0.8rem; font-weight:700;">{" ".join(p["sha_stars"])}</div></div>', unsafe_allow_html=True)
 
-        r1 = st.columns(4); [with r1[i]: draw_box(idx) for i, idx in enumerate([5,6,7,8])]
+        r1 = st.columns(4)
+        for i, idx in enumerate([5,6,7,8]):
+            with r1[i]: draw_box(idx)
+
         st.write(""); mr = st.columns([1, 2, 1])
         with mr[0]: draw_box(4); st.write(""); draw_box(3)
         with mr[1]: st.markdown(f'<div style="text-align:center; height:320px; padding:100px 0;"><h1>{b_date.strftime("%Y-%m-%d")}</h1><p>{b_hour_raw}</p></div>', unsafe_allow_html=True)
         with mr[2]: draw_box(9); st.write(""); draw_box(10)
-        st.write(""); r4 = st.columns(4); [with r4[i]: draw_box(idx) for i, idx in enumerate([2,1,0,11])]
+        st.write(""); r4 = st.columns(4)
+        for i, idx in enumerate([2,1,0,11]):
+            with r4[i]: draw_box(idx)
+
 
     with c2:
         st.subheader("🏁 首席審計總結")
