@@ -130,20 +130,18 @@ if menu == "🚀 核心財務審計":
             focus_fly = fly_data[focus_p['name']]
             
             st.markdown(f"""
-            <div class="decision-center">
-                <h1 style="color:#fbbf24 !important; font-size:2.8rem; margin-bottom:0;">{b_date.year}</h1>
-                <p style="color:#94a3b8 !important; font-size:1.1rem; margin-bottom:30px;">{b_date.strftime("%m-%d")} ({b_hour_raw}) {focus_p['name']}</p>
-                
-                <h2 style="color:#10b981 !important; font-size:1.6rem; margin-bottom:10px;">{focus_fly['lu_dest']}</h2>
-                <h2 style="color:#ef4444 !important; font-size:1.6rem; margin-bottom:30px;">{focus_fly['ji_dest']}</h2>
-                
-                <div class="status-badge">
-                    <span style="color:#fbbf24 !important; font-weight:900;">【動態分布】</span>
-                    獲利導向「{focus_fly['lu_dest'].split(' ')[-1]}」，但風險潛伏於「{focus_fly['ji_dest'].split(' ')[-1]}」。
-                    建議利用「{focus_fly['lu_dest'].split(' ')[-1]}」的盈餘來填補「{focus_fly['ji_dest'].split(' ')[-1]}」的漏洞。
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+<div class="decision-center">
+<h1 style="color:#fbbf24 !important; font-size:2.8rem; margin-bottom:0;">{b_date.year}</h1>
+<p style="color:#94a3b8 !important; font-size:1.1rem; margin-bottom:30px;">{b_date.strftime("%m-%d")} ({b_hour_raw}) {focus_p['name']}</p>
+<h2 style="color:#10b981 !important; font-size:1.6rem; margin-bottom:10px;">{focus_fly['lu_dest']}</h2>
+<h2 style="color:#ef4444 !important; font-size:1.6rem; margin-bottom:30px;">{focus_fly['ji_dest']}</h2>
+<div class="status-badge">
+<span style="color:#fbbf24 !important; font-weight:900;">【動態分布】</span>
+獲利導向「{focus_fly['lu_dest'].split(' ')[-1]}」，但風險潛伏於「{focus_fly['ji_dest'].split(' ')[-1]}」。
+建議利用「{focus_fly['lu_dest'].split(' ')[-1]}」的盈餘來填補「{focus_fly['ji_dest'].split(' ')[-1]}」的漏洞。
+</div>
+</div>
+""", unsafe_allow_html=True)
             
         with mr[2]: draw_box(9); st.write(""); draw_box(10)
         
