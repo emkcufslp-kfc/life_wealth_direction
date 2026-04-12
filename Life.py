@@ -7,68 +7,72 @@ import sys
 sys.path.append(os.path.join(os.getcwd(), "backend"))
 from ziwei_engine import ZiWeiEngine
 
-# --- 1. 系統設定 (Institutional Flagship v6.0 - Dark Neon Focus) ---
+# --- 1. 系統設定 (Institutional Flagship v6.2 - Hybrid Template) ---
 st.set_page_config(
-    page_title="紫微財務風控系統 - Dark Neon Focus", 
-    page_icon="🌌",
+    page_title="紫微財務風控系統 - Institutional Auditor", 
+    page_icon="⚖️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Dark Neon Institutional CSS
+# Hybrid Institutional CSS (Paper Global + Neon local grid)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Inter:wght@400;600;800&display=swap');
     
     :root {
-        --dark-bg: #0f172a;
-        --card-bg: #1e293b;
-        --accent-indigo: #6366f1;
+        --paper-bg: #fdfbf7;
+        --white-card: #ffffff;
+        --inst-blue: #1e293b;
+        --grid-dark: #1e293b;
+        --neon-indigo: #6366f1;
         --star-major: #fbbf24;
         --star-lucky: #10b981;
         --star-sha: #ef4444;
-        --text-white: #f8fafc;
     }
 
-    .stApp { background-color: var(--dark-bg); color: var(--text-white); }
-    h1, h2, h3, h4, p, span { font-family: 'Noto Sans TC', sans-serif; color: var(--text-white) !important; }
+    /* Global Restoration */
+    .stApp { background-color: var(--paper-bg); color: var(--inst-blue); }
+    h1, h2, h3, h4, p, li { font-family: 'Noto Sans TC', sans-serif; color: var(--inst-blue) !important; }
     
-    /* Palace Box Styling */
-    .palace-box {
-        background: var(--card-bg); border-radius: 12px; padding: 15px; min-height: 185px;
-        display: flex; flex-direction: column; border: 1px solid #334155;
-        transition: transform 0.2s, border-color 0.2s;
+    .ceo-card {
+        background: var(--white-card); border: 1.5px solid #e2e8f0; border-radius: 20px; padding: 25px;
+        margin-bottom: 24px; display: flex; align-items: center; gap: 25px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
     }
-    .palace-box:hover { border-color: var(--accent-indigo); transform: translateY(-2px); }
-    .palace-header { display: flex; justify-content: space-between; font-weight: 900; font-size: 1.1rem; }
-    .palace-stem { color: #818cf8 !important; font-size: 0.9rem; }
+    
+    /* Institutional Tab Styling */
+    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
+    .stTabs [data-baseweb="tab"] { background-color: white; border-radius: 8px 8px 0 0; padding: 10px 20px; border: 1px solid #e2e8f0; }
+
+    /* Palace Grid Container Style */
+    .grid-container {
+        background: #0f172a; border-radius: 24px; padding: 20px; border: 2px solid #1e293b;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    .palace-box {
+        background: #1e293b; border-radius: 12px; padding: 12px; min-height: 165px;
+        display: flex; flex-direction: column; border: 1px solid #334155;
+    }
+    .palace-header { display: flex; justify-content: space-between; font-weight: 700; color: white !important; }
+    .palace-header span { color: white !important; }
     
     /* Central Decision Cluster */
     .decision-center {
-        background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-        border: 2px solid var(--accent-indigo); border-radius: 20px;
-        padding: 30px; text-align: center; height: 100%;
-        box-shadow: 0 0 25px rgba(99, 102, 241, 0.2);
+        background: #1e293b; border: 2.5px solid var(--neon-indigo); border-radius: 20px;
+        padding: 25px; text-align: center; height: 100%;
     }
     .status-badge {
-        background: rgba(255,255,255,0.05); border: 1px solid #334155; border-radius: 10px;
-        padding: 15px; margin-top: 25px; font-size: 0.95rem; line-height: 1.6;
+        background: rgba(255,255,255,0.03); border: 1px solid #334155; border-radius: 10px;
+        padding: 12px; margin-top: 15px; font-size: 0.9rem; line-height: 1.6; color: #cbd5e1 !important;
     }
-    
-    /* Buttons */
-    .stButton>button {
-        width: 100%; border-radius: 8px; border: 1px solid #334155; background: rgba(255,255,255,0.03);
-        color: #94a3b8; font-size: 0.8rem; height: 32px; transition: all 0.2s;
-    }
-    .stButton>button:hover { border-color: var(--accent-indigo); color: white; background: rgba(99, 102, 241, 0.1); }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🌌 紫微財務風控系統：Institutional v6.0")
+st.title("⚖️ 紫微財務風控系統：Institutional Flagship")
 
 # --- State Management ---
-if 'focus_idx' not in st.session_state:
-    st.session_state.focus_idx = 0  # Default to Life Palace (命宮)
+if 'focus_idx' not in st.session_state: st.session_state.focus_idx = 0
 
 # --- Sidebar ---
 st.sidebar.title("🗂️ 系統導航")
@@ -90,24 +94,26 @@ if menu == "🚀 核心財務審計":
     grid = st.session_state.grid_data
     fly_data = st.session_state.fly_data
 
-    # Layout: Grid + Side Panel
+    # CEO Header Restoration
+    st.markdown(f"""<div class="ceo-card">
+        <img src="data:image/png;base64,{st.session_state.engine.get_image_base64(audit["ceo"]["image"])}" width="80">
+        <div><div style="font-size:1.6rem; font-weight:900;">⚖️ 執行長 (CEO)：{audit["ceo"]["star"]}</div><div>具備核心決策素質。</div></div>
+    </div>""", unsafe_allow_html=True)
+
     c1, c2 = st.columns([2.5, 1])
     
     with c1:
+        st.markdown('<div class="grid-container">', unsafe_allow_html=True)
         def draw_box(idx):
             p = grid[idx]
             is_focused = (st.session_state.focus_idx == idx)
-            border_color = "#6366f1" if is_focused else "#334155"
-            
+            border_c = "#6366f1" if is_focused else "#334155"
             st.markdown(f"""
-            <div class="palace-box" style="border-top: 3px solid {border_color};">
-                <div class="palace-header">
-                    <span>{p["name"]}</span>
-                    <span class="palace-stem">{p["stem"]}</span>
-                </div>
-                <div style="color:#fbbf24; font-weight:800; margin-top:8px; font-size:1rem;">{" ".join(p["major_stars"])}</div>
-                <div style="color:#10b981; font-size:0.85rem; font-weight:600; margin-top:4px;">{" ".join(p["lucky_stars"])}</div>
-                <div style="color:#ef4444; font-size:0.85rem; font-weight:600;">{" ".join(p["sha_stars"])}</div>
+            <div class="palace-box" style="border-top: 4px solid {border_c};">
+                <div class="palace-header"><span>{p["name"]}</span><span style="color:#818cf8 !important;">{p["stem"]}</span></div>
+                <div style="color:#fbbf24; font-weight:900; margin-top:8px;">{" ".join(p["major_stars"])}</div>
+                <div style="color:#10b981; font-size:0.8rem; font-weight:700;">{" ".join(p["lucky_stars"])}</div>
+                <div style="color:#ef4444; font-size:0.8rem; font-weight:700;">{" ".join(p["sha_stars"])}</div>
                 <div style="flex-grow:1;"></div>
             </div>
             """, unsafe_allow_html=True)
@@ -115,68 +121,48 @@ if menu == "🚀 核心財務審計":
                 st.session_state.focus_idx = idx
                 st.rerun()
 
-        # 4x4 Ring Grid
-        r1 = st.columns(4)
-        for i, idx in enumerate([5,6,7,8]): 
-            with r1[i]: draw_box(idx)
-        
-        st.write("")
-        mr = st.columns([1, 2, 1])
+        r1 = st.columns(4); [with r1[i]: draw_box(idx) for i, idx in enumerate([5,6,7,8])]
+        st.write(""); mr = st.columns([1, 2, 1])
         with mr[0]: draw_box(4); st.write(""); draw_box(3)
-        
-        # --- Central Decision Cluster ---
         with mr[1]:
             focus_p = grid[st.session_state.focus_idx]
             focus_fly = fly_data[focus_p['name']]
-            
             st.markdown(f"""
 <div class="decision-center">
-<h1 style="color:#fbbf24 !important; font-size:2.8rem; margin-bottom:0;">{b_date.year}</h1>
-<p style="color:#94a3b8 !important; font-size:1.1rem; margin-bottom:30px;">{b_date.strftime("%m-%d")} ({b_hour_raw}) {focus_p['name']}</p>
-<h2 style="color:#10b981 !important; font-size:1.6rem; margin-bottom:10px;">{focus_fly['lu_dest']}</h2>
-<h2 style="color:#ef4444 !important; font-size:1.6rem; margin-bottom:30px;">{focus_fly['ji_dest']}</h2>
+<h1 style="color:#fbbf24 !important; font-size:2.8rem; margin-bottom:5px;">{b_date.year}</h1>
+<p style="color:#94a3b8 !important; font-size:1rem; margin-bottom:25px;">{b_date.strftime("%m-%d")} ({b_hour_raw}) {focus_p['name']}</p>
+<h2 style="color:#10b981 !important; font-size:1.5rem; margin-bottom:8px;">{focus_fly['lu_dest']}</h2>
+<h2 style="color:#ef4444 !important; font-size:1.5rem; margin-bottom:20px;">{focus_fly['ji_dest']}</h2>
 <div class="status-badge">
-<span style="color:#fbbf24 !important; font-weight:900;">【動態分布】</span>
+<span style="color:#fbbf24 !important; font-weight:900;">【動態分布】</span><br>
 獲利導向「{focus_fly['lu_dest'].split(' ')[-1]}」，但風險潛伏於「{focus_fly['ji_dest'].split(' ')[-1]}」。
-建議利用「{focus_fly['lu_dest'].split(' ')[-1]}」的盈餘來填補「{focus_fly['ji_dest'].split(' ')[-1]}」的漏洞。
-</div>
-</div>
+建議利用「{focus_fly['lu_dest'].split(' ')[-1]}」的盈餘填補漏洞。
+</div></div>
 """, unsafe_allow_html=True)
-            
         with mr[2]: draw_box(9); st.write(""); draw_box(10)
-        
-        st.write("")
-        r4 = st.columns(4)
-        for i, idx in enumerate([2,1,0,11]): 
-            with r4[i]: draw_box(idx)
+        st.write(""); r4 = st.columns(4); [with r4[i]: draw_box(idx) for i, idx in enumerate([2,1,0,11])]
+        st.markdown('</div>', unsafe_allow_html=True)
 
     with c2:
         st.subheader("🏁 首席審計診斷")
-        st.info("【策略提示】點擊宮位「聚焦」以查看部門四化流向。")
-        st.markdown(f"""
-        <div style="background:#1e293b; border:1px solid #ef4444; border-radius:15px; padding:20px;">
-            <h4 style="color:#ef4444 !important; margin-top:0;">🎯 先天資本 (年生：{audit["innate"]["stem"]})</h4>
-        """, unsafe_allow_html=True)
+        st.info("【策略提示】點立宮位「🎯 宮位四化」以查看動態流向。")
+        st.markdown(f'<div style="background:white; border:1px solid #ef4444; border-radius:15px; padding:20px;"><h4 style="color:#ef4444 !important; margin-top:0;">🎯 先天資本 (年生：{audit["innate"]["stem"]})</h4>', unsafe_allow_html=True)
         for t, d in audit['innate']['stars'].items(): 
-            st.markdown(f"**{t}**：<span style='color:#fbbf24'>{d['star']}</span> ➔ {d['palace']}", unsafe_allow_html=True)
+            st.markdown(f"**{t}**：<span style='color:#d97706; font-weight:800;'>{d['star']}</span> ➔ {d['palace']}", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.write("")
-        st.markdown("### 🤖 AI 智能建議")
+        st.divider(); st.markdown("### 🤖 AI 智能建議")
         ak = st.secrets.get("GOOGLE_API_KEY", "") or st.sidebar.text_input("Gemini API Key", type="password")
         if st.button("🚀 執行 AI 戰略分析"):
             if ak:
                 with st.spinner("戰略模擬中..."):
                     res = st.session_state.engine.get_ai_audit(audit, api_key=ak)
-                    st.markdown(f'<div style="background:rgba(255,255,255,0.05); border:1px solid #334155; border-radius:10px; padding:15px; font-size:0.9rem;">{res}</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; font-size:0.95rem;">{res}</div>', unsafe_allow_html=True)
             else: st.warning("請輸入 API Key")
 
 if menu == "📚 戰略文庫":
     st.subheader("📚 專業財富策略存檔")
-    with open("assets/Logic.md", "r", encoding="utf-8") as f:
-        st.markdown(f.read())
+    with open("assets/Logic.md", "r", encoding="utf-8") as f: st.markdown(f.read())
 
 if menu == "📜 研報概覽":
     st.subheader("紫微財務戰略研究報告")
-    with open("紫微斗數財運四化解析.md", "r", encoding="utf-8") as f: 
-        st.markdown(f.read())
+    with open("紫微斗數財運四化解析.md", "r", encoding="utf-8") as f: st.markdown(f.read())
