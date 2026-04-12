@@ -7,9 +7,9 @@ import sys
 sys.path.append(os.path.join(os.getcwd(), "backend"))
 from ziwei_engine import ZiWeiEngine
 
-# --- 1. 系統設定 (Institutional Flagship v5.4 - Final Production) ---
+# --- 1. 系統設定 (Institutional Flagship v5.6 - Final Production Refinement) ---
 st.set_page_config(
-    page_title="紫微財務風控系統 - Institutional Auditor", 
+    page_title="紫微財務風控系統 - Strategy Archive", 
     page_icon="🧭",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -25,9 +25,6 @@ st.markdown("""
         --paper-card: #ffffff;
         --paper-border: #e2e8f0;
         --institutional-blue: #1e293b;
-        --color-soul: #8b5cf6;
-        --color-wealth: #059669;
-        --color-property: #d97706;
     }
 
     .stApp { background-color: var(--paper-bg); color: var(--institutional-blue); }
@@ -45,19 +42,19 @@ st.markdown("""
     }
     .palace-header { display: flex; justify-content: space-between; font-weight: 900; font-size: 1rem; }
     
-    .knowledge-card {
-        background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 25px; margin-bottom: 30px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    .logic-section {
+        background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 35px; margin-bottom: 40px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
-    .knowledge-header {
-        font-size: 1.4rem; font-weight: 900; color: #1e293b; margin-bottom: 20px;
-        border-bottom: 3px solid #6366f1; display: inline-block; padding-bottom: 5px;
+    .logic-title {
+        font-size: 1.6rem; font-weight: 900; color: #1e293b; margin-bottom: 25px;
+        border-right: 8px solid #6366f1; padding-right: 15px; display: inline-block;
     }
-    .knowledge-body { font-size: 0.95rem; line-height: 1.8; color: #475569; }
+    .logic-text { font-size: 1rem; line-height: 1.9; color: #334155; }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🧭 紫微財務風控系統：Institutional Flagship")
+st.title("🧭 紫微財務風控系統：Strategy Archive")
 
 # --- Sidebar ---
 st.sidebar.title("🗂️ 系統導航")
@@ -91,17 +88,15 @@ if menu == "🚀 核心財務審計":
             st.markdown(f'<div class="palace-box" style="border-top:5px solid {tc};"><div class="palace-header" style="color:{tc};"><span>{p["name"]}</span> <span>{p["stem"]}</span></div><div style="color:#d97706; font-weight:800; margin-top:5px;">{" ".join(p["major_stars"])}</div><div style="color:#15803d; font-size:0.8rem; font-weight:700;">{" ".join(p["lucky_stars"])} {" ".join(p["wealth_stars"])}</div><div style="color:#dc2626; font-size:0.8rem; font-weight:700;">{" ".join(p["sha_stars"])}</div></div>', unsafe_allow_html=True)
 
         r1 = st.columns(4)
-        for i, idx in enumerate([5,6,7,8]):
+        for i, idx in enumerate([5,6,7,8]): 
             with r1[i]: draw_box(idx)
-
         st.write(""); mr = st.columns([1, 2, 1])
         with mr[0]: draw_box(4); st.write(""); draw_box(3)
         with mr[1]: st.markdown(f'<div style="text-align:center; height:320px; padding:100px 0;"><h1>{b_date.strftime("%Y-%m-%d")}</h1><p>{b_hour_raw}</p></div>', unsafe_allow_html=True)
         with mr[2]: draw_box(9); st.write(""); draw_box(10)
         st.write(""); r4 = st.columns(4)
-        for i, idx in enumerate([2,1,0,11]):
+        for i, idx in enumerate([2,1,0,11]): 
             with r4[i]: draw_box(idx)
-
 
     with c2:
         st.subheader("🏁 首席審計總結")
@@ -113,82 +108,86 @@ if menu == "🚀 核心財務審計":
     st.divider()
     t1, t2, t3, tx, t4, t5, t6 = st.tabs(["🏎️ 決策部", "💸 業務部", "🏰 金庫部", "🎯 先天格局", "🛰️ 12宮連鎖", "📚 文庫指南", "🤖 AI 策略室"])
     
-    def render_dept(title, d):
-        st.markdown(f"### 🛡️ {title} 營運報表")
+    with t1:
+        st.markdown(f"### 🛡️ 命宮 營運報表")
         cl, cr = st.columns(2)
-        with cl: st.success(f"📈 資源投放 ➔ {d['layer2']['lu']['dest']}\n\n**流向導向位。**")
-        with cr: st.error(f"🛡️ 戰略防火牆 ➔ {d['layer2']['ji']['dest']}\n\n**風險防禦位。**")
-
-    with t1: render_dept("命宮", audit['soul'])
-    with t2: render_dept("財帛宮", audit['wealth'])
-    with t3: render_dept("田宅宮", audit['property'])
+        with cl: st.success(f"📈 資源投放 ➔ {audit['soul']['layer2']['lu']['dest']}\n\n**流向導向位。**")
+        with cr: st.error(f"🛡️ 戰略防火牆 ➔ {audit['soul']['layer2']['ji']['dest']}\n\n**風險防禦位。**")
+    with t2:
+        st.markdown(f"### 🛡️ 財帛宮 營運報表")
+        cl, cr = st.columns(2)
+        with cl: st.success(f"📈 資源投放 ➔ {audit['wealth']['layer2']['lu']['dest']}\n\n**流向導向位。**")
+        with cr: st.error(f"🛡️ 戰略防火牆 ➔ {audit['wealth']['layer2']['ji']['dest']}\n\n**風險防禦位。**")
+    with t3:
+        st.markdown(f"### 🛡️ 田宅宮 營運報表")
+        cl, cr = st.columns(2)
+        with cl: st.success(f"📈 資源投放 ➔ {audit['property']['layer2']['lu']['dest']}\n\n**流向導向位。**")
+        with cr: st.error(f"🛡️ 戰略防火牆 ➔ {audit['property']['layer2']['ji']['dest']}\n\n**風險防禦位。**")
     with tx:
         for p in st.session_state.engine.get_innate_audit():
             st.markdown(f'<div style="background:white; border:1px solid #e2e8f0; border-radius:12px; margin-bottom:15px; overflow:hidden;"><div style="background:#1e293b; color:white; padding:10px 20px; font-weight:700;">{p["header"]}</div><div style="padding:20px;">{p["palace_def"]}<br><br>* **深層意義**：{p["meaning"]}<br>* **具體影響**：{p["impact"]}</div></div>', unsafe_allow_html=True)
     with t4:
         for p_n, p_d in st.session_state.engine.fly_all_palaces().items():
             with st.expander(f"{p_n} 流向 ➔ {p_d['lu_dest']} / {p_d['ji_dest']}"): st.write(p_d['collision'])
+    
     with t5:
-        st.markdown("### 📚 財富策略知識庫 (附錄・第十章)")
-        
-        # Section 1: Risk Warnings
-        with st.container():
-            st.markdown('<div class="knowledge-card"><div class="knowledge-header">一、 財帛化忌：風險預警 (Dept Mine)</div>', unsafe_allow_html=True)
-            k1c, k1i = st.columns([1, 1])
-            with k1c: st.markdown("""
-            * **武曲化忌**：小心資金斷鍊、周轉不靈。
-            * **太陽化忌**：小心海外投資地雷、名氣大而實質虧損。
-            * **廉貞化忌**：求財牽涉法規糾紛，勿遊走法律紅線。
-            * **太陰化忌**：不動產套牢、產權不清或租金回收難。
-            * **天機化忌**：策略錯誤或指標失效，頻繁進出手續費重。
-            * **貪狼化忌**：投機泡沫破裂、數位資產被駭或爆倉。
-            """); st.markdown('</div>', unsafe_allow_html=True)
-            with k1i: st.image("assets/logic_1.jpg", use_container_width=True)
-        
-        # Section 2: Wealth Engines
-        with st.container():
-            st.markdown('<div class="knowledge-card"><div class="knowledge-header">二、 主星化祿：財富引擎 (Wealth Engines)</div>', unsafe_allow_html=True)
-            k2c, k2i = st.columns([1, 1])
-            with k2c: st.markdown("""
-            * **穩健服務類**：天同(輕鬆財)、天梁(特許蔭庇財)。
-            * **技術策略類**：天機(資訊差)、太陽(媒體財)、巨門(顧問財)。
-            * **金融財星類**：武曲(正財金融)、太陰(地產收租)、天府(庫存儲備)。
-            """); st.markdown('</div>', unsafe_allow_html=True)
-            with k2i: st.image("assets/logic_5.jpg", use_container_width=True)
+        # Logic Mapping Data 1-8
+        logics = [
+            ("Logic 01: 腦袋與資訊財引擎", "logic_1.jpg", """這張圖表將傳統的紫微斗數星曜（當它們化祿時）與現代的投資策略及產業進行了結合。核心邏輯是：這三顆星不靠體力活發財，而是靠「腦袋」、「資訊差」或「名氣」來賺錢。
+            1. **天機星**：高頻交易、量化模型、軟體程式、短線技術。
+            2. **太陽星**：藍籌股、太陽能、媒體產業、海外投資。
+            3. **巨門星**：深度分析、法律諮詢、深挖資訊差。"""),
+            ("Logic 02: 宮位化忌風險黑洞", "logic_2.jpg", """深入解析「化忌」落在不同宮位時的財務漏洞與心態風險。
+            1. **兄弟宮**：現金流黑洞，嚴禁借貸。
+            2. **夫妻宮**：感情連累財務，建議財務獨立。
+            3. **子女宮**：投資合夥禁區，錢存不住。
+            4. **遷移宮**：外地求財壓力大，匯率風險。
+            5. **交友宮**：眾人劫財，切勿跟風募資。
+            6. **父母宮**：法律合約雷區，稅務與官司。"""),
+            ("Logic 03: 佛系穩健被動收益", "logic_3.jpg", """天同與天梁化祿：不爭之財，細水長流。
+            1. **天同星**：民生餐飲、休閒產業、穩健分紅。
+            2. **天梁星**：醫藥長照、保險、特許、繼承。
+            *戰略：拒絕高槓桿，佈局租金與股息。*"""),
+            ("Logic 04: 正統主流重資產財星", "logic_4.jpg", """武曲、太陰、天府：靠實力與規模說話。
+            1. **武曲星**：硬通貨(黃金/期貨)、主流金融。
+            2. **太陰星**：不動產、土地、長線收租。
+            3. **天府星**：大型權值股、資產管理、倉儲。"""),
+            ("Logic 05: 財帛化忌：九大主星地雷", "logic_5.jpg", """財帛化忌落入主星時的針對性防禦。
+            - 武曲: 資金斷鍊 / 廉貞: 法律紅線 / 太陽: 海外虧損
+            - 貪狼: 泡沫破裂 / 天機: 指標失效 / 太陰: 房產套牢
+            - 巨門: 合約漏洞 / 天同: 夕陽產業 / 昌曲: 信用破產"""),
+            ("Logic 06: 化祿入他宮：外部槓桿", "logic_6.jpg", """錢從哪裡來？錢該往哪裡投？
+            1. **兄弟宮**：現金周轉位。 / **夫妻宮**：異性助力財。
+            2. **子女宮**：合夥新創投資。 / **遷移宮**：跨國外幣機會。
+            3. **交友宮**：平台與大眾財。 / **父母宮**：政府機構特許。"""),
+            ("Logic 07: 忌星入我宮：自我損耗", "logic_7.jpg", """財務心態與內部洩壓點分析。
+            1. **命宮**：辛苦血汗錢。 / **財帛宮**：突發支出漏水。
+            2. **官祿宮**：資本過度套牢。 / **田宅宮**：資產固化淪為房奴。
+            3. **疾厄宮**：健康成本。 / **福德宮**：焦慮主觀誤判。"""),
+            ("Logic 08: 祿星入我宮：核心獲利位", "logic_8.jpg", """不同位置的致富「手感」與獲利方向。
+            1. **命宮**：個人品牌變現。 / **財帛宮**：高轉速短線交易。
+            2. **官祿宮**：以財生財再投資。 / **田宅宮**：最強守財不動產。
+            3. **疾厄宮**：穩健實體加盟。 / **福德宮**：直覺與偏財福報。""")
+        ]
 
-        # Section 3: Investment Strategy
-        with st.container():
-            st.markdown('<div class="knowledge-card"><div class="knowledge-header">三、 化祿入宮：投資方向 (Strategic Directions)</div>', unsafe_allow_html=True)
-            k3c, k3i = st.columns([1, 1])
-            with k3c: st.markdown("""
-            * **內部引擎 (我宮)**：
-                - **命宮**：個人品牌與增值。
-                - **田宅宮**：最強守財，適合房貸存股。
-                - **官祿宮**：以財生財，擴大再投資。
-            * **外部槓桿 (他宮)**：
-                - **遷移宮**：遠距與外匯際遇。
-                - **交友宮**：大眾財與平台經濟。
-            """); st.markdown('</div>', unsafe_allow_html=True)
-            with k3i: st.image("assets/logic_7.jpg", use_container_width=True)
-            
-        # Section 4: Leaks
-        with st.container():
-            st.markdown('<div class="knowledge-card"><div class="knowledge-header">四、 忌星入宮：財務破洞 (Financial Leaks)</div>', unsafe_allow_html=True)
-            k4c, k4i = st.columns([1, 1])
-            with k4c: st.markdown("""
-            * **田宅宮**：淪為房奴，資產流動性極差。
-            * **兄弟宮**：現金位受損，嚴禁借貸。
-            * **福德宮**：焦慮投機失利，因財煩惱。
-            * **父母宮**：法律文書糾紛，注意合約漏洞。
-            """); st.markdown('</div>', unsafe_allow_html=True)
-            with k4i: st.image("assets/logic_10.jpg", use_container_width=True)
+        for title, img_path, desc in logics:
+            with st.container():
+                st.markdown(f'<div class="logic-section"><div class="logic-title">🏗️ {title}</div>', unsafe_allow_html=True)
+                ic, tc = st.columns([1, 1.2])
+                with ic: st.image(f"assets/{img_path}", use_container_width=True)
+                with tc: st.markdown(f'<div class="logic-text">{desc.replace("\n", "<br>")}</div>', unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
 
     with t6:
         st.markdown("### 🤖 首席戰略審計官 (AI Gemini Pro)")
         ak = st.secrets.get("GOOGLE_API_KEY", "") or st.sidebar.text_input("Gemini API Key", type="password")
         if st.button("🚀 啟動專業深度審計"):
             if ak:
-                with st.spinner("專業審核中..."):
+                with st.spinner("審查數據中..."):
                     res = st.session_state.engine.get_ai_audit(audit, api_key=ak)
                     st.markdown(f'<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:15px; padding:25px; line-height:1.8;">{res}</div>', unsafe_allow_html=True)
             else: st.warning("請輸入 API Key")
+
+if menu == "📜 研報概覽":
+    st.subheader("紫微財務戰略研究報告")
+    with open("紫微斗數財運四化解析.md", "r", encoding="utf-8") as f: st.markdown(f.read())
