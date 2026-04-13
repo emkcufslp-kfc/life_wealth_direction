@@ -71,6 +71,34 @@ st.title("⚖️ 紫微財務風控系統：Institutional Flagship")
 st.sidebar.title("🗂️ 系統導航")
 menu = st.sidebar.radio("模組地圖", ["🚀 核心財務審計", "📚 戰略文庫", "📜 研報概覽"], index=0)
 
+# --- Helper: Strategic Library ---
+def render_strategic_library():
+    st.subheader("📚 專業財富策略存檔")
+    try:
+        if not os.path.exists("assets/Logic.md"):
+            st.error("⚠️ 戰略文庫文件 (Logic.md) 遺失，請檢查 assets 目錄。")
+            return
+        with open("assets/Logic.md", "r", encoding="utf-8") as f: content = f.read()
+        import re
+        # Harden regex to catch variants like 'logic_1.jpg:', 'logic_2.jpg', 'logic_5.jpg '
+        sections = re.split(r'(logic_\d\.jpg[:\s]*)', content)
+        for i in range(1, len(sections), 2):
+            img_marker = sections[i]
+            img_name = img_marker.replace(":", "").strip()
+            text_content = sections[i+1].strip() if i+1 < len(sections) else ""
+            
+            col_img, col_txt = st.columns([1, 1.5])
+            with col_img: 
+                img_data = st.session_state.engine.get_image_base64(img_name)
+                if img_data:
+                    st.image(img_data, use_container_width=True)
+                else:
+                    st.warning(f"⚠️ 資源載入失敗: {img_name}")
+            with col_txt: st.markdown(text_content)
+            st.divider()
+    except Exception as e:
+        st.error(f"⚠️ 載入庫房時發生錯誤: {e}")
+
 if menu == "🚀 核心財務審計":
     b_date = st.sidebar.date_input("出生日期", datetime.date(1971, 11, 18))
     times = ["子時", "丑時", "寅時", "卯時", "辰時", "巳時", "午時", "未時", "申時", "酉時", "戌時", "亥時"]
@@ -138,7 +166,7 @@ if menu == "🚀 核心財務審計":
             
             st.markdown('<div class="decision-center">', unsafe_allow_html=True)
             if rep_img:
-                st.markdown(f'<img src="{rep_img}" style="width:140px; border-radius:15px; margin-bottom:15px; border:2px solid #6366f1;">', unsafe_allow_html=True)
+                st.image(rep_img, width=140)
             st.markdown(f"""
             <h1 style="color:var(--inst-blue) !important; font-size:2.4rem; margin-bottom:2px;">{focus_p['name']}</h1>
             <p style="color:#94a3b8 !important; font-size:1.1rem; font-weight:600; margin-bottom:15px;">{b_date.strftime('%Y-%m-%d')} · {b_hour_raw}</p>
@@ -258,24 +286,10 @@ if menu == "🚀 核心財務審計":
                 </div>
                 """, unsafe_allow_html=True)
     with t5:
-        # --- KNOWLEDGE GALLERY (v6.8 Side-by-Side) ---
-        st.subheader("📚 專業財富策略存檔")
-        with open("assets/Logic.md", "r", encoding="utf-8") as f: content = f.read()
-        import re
-        sections = re.split(r'(logic_\d\.jpg[:\s]*)', content)
-        for i in range(1, len(sections), 2):
-            img_name = sections[i].replace(":", "").strip()
-            text_content = sections[i+1].strip() if i+1 < len(sections) else ""
-            col_img, col_txt = st.columns([1, 1.5])
-            with col_img: 
-                img_data = st.session_state.engine.get_image_base64(img_name)
-                if img_data: st.image(img_data, use_container_width=True)
-            with col_txt: st.markdown(text_content)
-            st.divider()
+        render_strategic_library()
 
 if menu == "📚 戰略文庫":
-    st.subheader("📚 專業財富策略存檔")
-    with open("assets/Logic.md", "r", encoding="utf-8") as f: st.markdown(f.read())
+    render_strategic_library()
 
 if menu == "📜 研報概覽":
     st.subheader("紫微財務戰略研究報告")
