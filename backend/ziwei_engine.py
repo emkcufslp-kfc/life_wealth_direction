@@ -86,12 +86,22 @@ class ZiWeiEngine:
         return self.BRANCH_ORDER.get(p.earthly_branch, 0)
 
     def get_image_base64(self, image_name):
-        filename = image_name if image_name.endswith(".png") else self.CEO_IMAGES.get(image_name, "")
+        # Allow .png, .jpg, .jpeg extensions directly
+        is_direct_file = any(image_name.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg"])
+        filename = image_name if is_direct_file else self.CEO_IMAGES.get(image_name, "")
+        
         if not filename: return ""
         path = self.ASSETS_DIR / filename
         if not path.exists(): return ""
+        
+        # Determine mime type
+        ext = path.suffix.lower()
+        mime = "image/png"
+        if ext in [".jpg", ".jpeg"]: mime = "image/jpeg"
+        
         with open(path, "rb") as f:
-            return base64.b64encode(f.read()).decode()
+            b64_str = base64.b64encode(f.read()).decode()
+            return f"data:{mime};base64,{b64_str}"
 
     def get_astrolabe_data(self):
         """Returns astrolabe data indexed by Earthly Branch (0-11)."""

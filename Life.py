@@ -138,7 +138,7 @@ if menu == "🚀 核心財務審計":
             
             st.markdown('<div class="decision-center">', unsafe_allow_html=True)
             if rep_img:
-                st.markdown(f'<img src="data:image/png;base64,{rep_img}" style="width:140px; border-radius:15px; margin-bottom:15px; border:2px solid #6366f1;">', unsafe_allow_html=True)
+                st.markdown(f'<img src="{rep_img}" style="width:140px; border-radius:15px; margin-bottom:15px; border:2px solid #6366f1;">', unsafe_allow_html=True)
             st.markdown(f"""
             <h1 style="color:var(--inst-blue) !important; font-size:2.4rem; margin-bottom:2px;">{focus_p['name']}</h1>
             <p style="color:#94a3b8 !important; font-size:1.1rem; font-weight:600; margin-bottom:15px;">{b_date.strftime('%Y-%m-%d')} · {b_hour_raw}</p>
@@ -269,7 +269,7 @@ if menu == "🚀 核心財務審計":
             col_img, col_txt = st.columns([1, 1.5])
             with col_img: 
                 img_data = st.session_state.engine.get_image_base64(img_name)
-                if img_data: st.image(f"data:image/png;base64,{img_data}", use_container_width=True)
+                if img_data: st.image(img_data, use_container_width=True)
             with col_txt: st.markdown(text_content)
             st.divider()
 
