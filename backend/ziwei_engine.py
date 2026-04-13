@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 class ZiWeiEngine:
+    VERSION_ID = "v6.32-INSTITUTIONAL-HARDENED"
     ROOT_DIR = Path(__file__).parent.parent
     ASSETS_DIR = ROOT_DIR / "assets"
     
@@ -22,8 +23,19 @@ class ZiWeiEngine:
         "癸": {"祿": "破軍", "權": "巨門", "科": "太陰", "忌": "貪狼", "logic": "暴力破局：競爭與貪婪風險"}
     }
 
-    # Institutional Star Classifications
-    MAJOR_STARS = {"紫微", "天機", "太陽", "武曲", "天同", "廉貞", "天府", "太陰", "貪狼", "巨門", "天相", "天梁", "七殺", "破軍"}
+    # Absolute Internal-to-Traditional Star Mapping (Harden for Streamlit Cloud)
+    STAR_MAP = {
+        "ziweiMaj": "紫微", "tianjiMaj": "天機", "taiyangMaj": "太陽", "wuquMaj": "武曲", 
+        "tiantongMaj": "天同", "lianzhenMaj": "廉貞", "tianfuMaj": "天府", "taiyinMaj": "太陰", 
+        "tanlangMaj": "貪狼", "jumenMaj": "巨門", "tianxiangMaj": "天相", "tianliangMaj": "天梁", 
+        "qishaMaj": "七殺", "pojunMaj": "破軍", "wenchangMin": "文昌", "wenquMin": "文曲", 
+        "zuofuMin": "左輔", "youbiMin": "右弼", "tiankuiMin": "天魁", "tianyueMin": "天鉞", 
+        "lucunMin": "祿存", "tianmaMin": "天馬", "qingyangMin": "擎羊", "tuoluoMin": "陀羅", 
+        "huoxingMin": "火星", "lingxingMin": "鈴星", "dikongMin": "地空", "dijieMin": "地劫"
+    }
+
+    # Institutional Star Classifications (Set for membership checks)
+    STARS_CHINESE = set(STAR_MAP.values())
     LUCKY_STARS = {"文昌", "文曲", "左輔", "右弼", "天魁", "天鉞", "祿存", "天馬"}
     SHA_STARS = {"擎羊", "陀羅", "火星", "鈴星", "地空", "地劫"}
 
@@ -42,13 +54,17 @@ class ZiWeiEngine:
             self.astro = iztro.by_lunar(solar_date, hour, self.gender_str)
         else:
             self.astro = iztro.by_solar(solar_date, hour, self.gender_str)
+        # Verify loading logic
+        print(f"[{self.VERSION_ID}] ZiWeiEngine Initialized for {solar_date}")
+
+    def _translate(self, star):
+        """Hardened translation with fallback."""
+        return self.STAR_MAP.get(star.name, star.translate_name())
 
     def get_image_base64(self, image_name):
-        # image_name is now the translated Chinese star name
+        # image_name is the Chinese star name
         filename = image_name if image_name.endswith(".png") else self.CEO_IMAGES.get(image_name, "")
-        if not filename: 
-            return ""
-        
+        if not filename: return ""
         path = self.ASSETS_DIR / filename
         if not path.exists(): return ""
         with open(path, "rb") as f:
@@ -58,9 +74,9 @@ class ZiWeiEngine:
         res = {}
         for i, p in enumerate(self.astro.palaces):
             all_stars = p.major_stars + p.minor_stars + p.adjective_stars
-            major_names = [s.translate_name() for s in p.major_stars]
-            lucky_names = [s.translate_name() for s in all_stars if s.translate_name() in self.LUCKY_STARS]
-            sha_names = [s.translate_name() for s in all_stars if s.translate_name() in self.SHA_STARS]
+            major_names = [self._translate(s) for s in p.major_stars]
+            lucky_names = [self._translate(s) for s in all_stars if self._translate(s) in self.LUCKY_STARS]
+            sha_names = [self._translate(s) for s in all_stars if self._translate(s) in self.SHA_STARS]
             
             res[i] = {
                 "name": p.translate_name(),
@@ -68,8 +84,8 @@ class ZiWeiEngine:
                 "major_stars": major_names,
                 "lucky_stars": lucky_names,
                 "sha_stars": sha_names,
-                "lucky_stars_ext": [s.translate_name() for s in p.minor_stars if s.translate_name() in self.LUCKY_STARS], # for compatibility
-                "sha_stars_ext": [s.translate_name() for s in p.minor_stars if s.translate_name() in self.SHA_STARS]
+                "lucky_stars_ext": lucky_names, # For Life.py
+                "sha_stars_ext": sha_names
             }
         return res
 
@@ -80,17 +96,16 @@ class ZiWeiEngine:
         for key in ["祿", "權", "科", "忌"]:
             target_star = y_map[key]
             for p in self.astro.palaces:
-                all_stars = [s.translate_name() for s in p.major_stars + p.minor_stars + p.adjective_stars]
+                all_stars = [self._translate(s) for s in p.major_stars + p.minor_stars + p.adjective_stars]
                 if target_star in all_stars:
                     res["stars"][key] = {"star": target_star, "palace": p.translate_name()}
         return res
 
     def get_wealth_audit(self):
         soul_p = [p for p in self.astro.palaces if p.name == "soulPalace"][0]
-        soul_star = soul_p.major_stars[0].translate_name() if soul_p.major_stars else "紫微"
+        soul_star = self._translate(soul_p.major_stars[0]) if soul_p.major_stars else "紫微"
         innate_dist = self.get_innate_distribution()
         
-        # Build institutional legacy layers for Life.py
         soul_idx = [i for i, p in enumerate(self.astro.palaces) if p.name == "soulPalace"][0]
         wealth_idx = [i for i, p in enumerate(self.astro.palaces) if p.name == "wealthPalace"][0]
         property_idx = [i for i, p in enumerate(self.astro.palaces) if p.name == "propertyPalace"][0]
@@ -108,7 +123,7 @@ class ZiWeiEngine:
         stem = source_p.translate_heavenly_stem()
         target_star = self.SI_HUA_MAP_TRAD[stem][target_type]
         for dp in self.astro.palaces:
-            d_stars = [s.translate_name() for s in dp.major_stars + dp.minor_stars + dp.adjective_stars]
+            d_stars = [self._translate(s) for s in dp.major_stars + dp.minor_stars + dp.adjective_stars]
             if target_star in d_stars: return dp.translate_name()
         return "未知"
 
