@@ -102,10 +102,17 @@ if menu == "🚀 核心財務審計":
             p = grid[idx]
             is_focused = (st.session_state.focus_idx == idx)
             border_c = "#6366f1" if is_focused else "#334155"
+            # Fixed Branch Name Mapping (子=0, 丑=1, ...)
+            branches = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+            b_name = branches[idx]
+            
             st.markdown(f"""
             <div class="palace-box" style="border-top: 4px solid {border_c};">
-                <div class="palace-header"><span>{p["name"]}</span><span style="color:#818cf8 !important;">{p["stem"]}</span></div>
-                <div style="color:#fbbf24; font-weight:900; margin-top:8px;">{" ".join(p["major_stars"])}</div>
+                <div class="palace-header">
+                    <span style="color:white !important;">{p["name"]} ({b_name})</span>
+                    <span style="color:#818cf8 !important;">{p["stem"]}</span>
+                </div>
+                <div style="color:#fbbf24; font-weight:900; margin-top:8px; font-size:1rem;">{" ".join(p["major_stars"])}</div>
                 <div style="color:#10b981; font-size:0.8rem; font-weight:700;">{" ".join(p["lucky_stars"])}</div>
                 <div style="color:#ef4444; font-size:0.8rem; font-weight:700;">{" ".join(p["sha_stars"])}</div>
             </div>
