@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 class ZiWeiEngine:
-    VERSION_ID = "v6.34-DYNAMIC-AUDIT"
+    VERSION_ID = "v6.37-IMAGE-DEEP-FIX"
     ROOT_DIR = Path(__file__).parent.parent
     ASSETS_DIR = ROOT_DIR / "assets"
     
@@ -34,7 +34,7 @@ class ZiWeiEngine:
         "huoxingMin": "火星", "lingxingMin": "鈴星", "dikongMin": "地空", "dijieMin": "地劫"
     }
 
-    # Institutional Star Profiles (HK Comic Style Strategic Narratives)
+    # Institutional Star Profiles
     STAR_PROFILES = {
         "紫微": "統籌全局、建立規範、分配資源、引領方向。專案管理在混亂中建立清晰規範，帶領跨部門團隊達成目標。",
         "天機": "拆解複雜資訊、預測趨勢、策劃路徑、優化流程。數據分析開發精準預測模型，找出系統漏洞並提供最優解法。",
@@ -47,12 +47,12 @@ class ZiWeiEngine:
         "貪狼": "建立連結、挖掘欲望、跨界融合、煽動情緒。數位行銷掌握市場潛在慾望，策劃跨界病毒行銷抓住大眾眼球。",
         "巨門": "深度剖析、精準表達、邏輯辯論、直指核心。法律/調查報導抽絲剝繭龐雜資訊，透過嚴密邏輯揭露真相贏得辯論。",
         "天相": "協調利益、維護正義、輔助決策、優化外觀。跨國談判作為絕對中立橋樑協調矛盾，以高品味提升品牌形象。",
-        "天梁": "庇蔭他人、傳承經驗、排解糾紛、制定紀律。醫療照護/顧問在緊急狀態保持冷靜，依經驗制定計畫成為精神支柱。",
+        "天梁": "庇蔭他人、傳傳經驗、排解糾紛、制定紀律。醫療照護/顧問在緊急狀態保持冷靜，依經驗制定計畫成為精神支柱。",
         "七殺": "鎖定目標、承擔高風險、獨當一面、不畏權威。新創企業拓展在荒野市場中單槍匹馬殺出重圍，迅速奪下市佔率。",
         "破軍": "打破常規、顛覆體制、破而後立、徹底重組。破壞性產品設計淘汰僵化系統，開發顛覆市場常理的全新破壞性解法。"
     }
 
-    # Earthly Branch Ordering (0 = 子, 1 = 丑 ... 11 = 亥)
+    # Earthly Branch Ordering
     BRANCH_ORDER = {
         "ziEarthly": 0, "chouEarthly": 1, "yinEarthly": 2, "maoEarthly": 3,
         "chenEarthly": 4, "siEarthly": 5, "wuEarthly": 6, "weiEarthly": 7,
@@ -86,25 +86,41 @@ class ZiWeiEngine:
         return self.BRANCH_ORDER.get(p.earthly_branch, 0)
 
     def get_image_base64(self, image_name):
-        # Allow .png, .jpg, .jpeg extensions directly
+        """Unified image loader for star names and direct files (png/jpg)."""
+        if not image_name: return ""
+        
+        # 1. Check if it's already a filename or a star name
         is_direct_file = any(image_name.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg"])
         filename = image_name if is_direct_file else self.CEO_IMAGES.get(image_name, "")
         
-        if not filename: return ""
-        path = self.ASSETS_DIR / filename
-        if not path.exists(): return ""
+        # 2. Path Resolution
+        path = self.ASSETS_DIR / filename if filename else None
         
-        # Determine mime type
+        # 3. Last Resort Fallback (search by star name in CEO_IMAGES if image_name had an extension but was a star)
+        if not path or not path.exists():
+            clean_name = image_name.split(".")[0]
+            filename_alt = self.CEO_IMAGES.get(clean_name, "")
+            if filename_alt:
+                path = self.ASSETS_DIR / filename_alt
+        
+        if not path or not path.exists():
+            print(f"[ERROR] Asset not found: {image_name} -> {filename}")
+            return ""
+        
+        # 4. MIME determination
         ext = path.suffix.lower()
-        mime = "image/png"
-        if ext in [".jpg", ".jpeg"]: mime = "image/jpeg"
+        mime = "image/png" if ext == ".png" else "image/jpeg"
         
-        with open(path, "rb") as f:
-            b64_str = base64.b64encode(f.read()).decode()
-            return f"data:{mime};base64,{b64_str}"
+        try:
+            with open(path, "rb") as f:
+                b64 = base64.b64encode(f.read()).decode()
+                print(f"[DEBUG] Loaded Asset: {image_name} as {path.name} ({len(b64)} bytes)")
+                return f"data:{mime};base64,{b64}"
+        except Exception as e:
+            print(f"[ERROR] Failed to load {path}: {e}")
+            return ""
 
     def get_astrolabe_data(self):
-        """Returns astrolabe data indexed by Earthly Branch (0-11)."""
         res = {}
         for p in self.astro.palaces:
             b_idx = self._get_branch_idx(p)
@@ -112,15 +128,10 @@ class ZiWeiEngine:
             major_names = [self._translate(s) for s in p.major_stars]
             lucky_names = [self._translate(s) for s in all_stars if self._translate(s) in self.LUCKY_STARS]
             sha_names = [self._translate(s) for s in all_stars if self._translate(s) in self.SHA_STARS]
-            
             res[b_idx] = {
-                "name": p.translate_name(),
-                "stem": p.translate_heavenly_stem(),
-                "major_stars": major_names,
-                "lucky_stars": lucky_names,
-                "sha_stars": sha_names,
-                "lucky_stars_ext": lucky_names,
-                "sha_stars_ext": sha_names
+                "name": p.translate_name(), "stem": p.translate_heavenly_stem(),
+                "major_stars": major_names, "lucky_stars": lucky_names, "sha_stars": sha_names,
+                "lucky_stars_ext": lucky_names, "sha_stars_ext": sha_names
             }
         return res
 
@@ -140,7 +151,6 @@ class ZiWeiEngine:
         soul_p = [p for p in self.astro.palaces if p.name == "soulPalace"][0]
         soul_stars = [self._translate(s) for s in soul_p.major_stars] if soul_p.major_stars else ["紫微"]
         innate_dist = self.get_innate_distribution()
-        
         soul_idx = self._get_branch_idx(soul_p)
         wealth_p = [p for p in self.astro.palaces if p.name == "wealthPalace"][0]
         wealth_stars = [self._translate(s) for s in wealth_p.major_stars] if wealth_p.major_stars else ["武曲"]
@@ -158,7 +168,6 @@ class ZiWeiEngine:
         }
 
     def f_dest_by_branch(self, b_idx, target_type):
-        """Calculates flying star destination starting from a specific branch index."""
         source_p = next(p for p in self.astro.palaces if self._get_branch_idx(p) == b_idx)
         stem = source_p.translate_heavenly_stem()
         target_star = self.SI_HUA_MAP_TRAD[stem][target_type]
@@ -168,20 +177,18 @@ class ZiWeiEngine:
         return "未知"
 
     def fly_all_palaces(self):
-        """Returns flying star data indexed by Earthly Branch (0-11)."""
         res = {}
         for p in self.astro.palaces:
             b_idx = self._get_branch_idx(p)
             stem = p.translate_heavenly_stem()
             y_map = self.SI_HUA_MAP_TRAD[stem]
-            lu_dest = self.f_dest_by_branch(b_idx, "祿")
-            ji_dest = self.f_dest_by_branch(b_idx, "忌")
             res[b_idx] = {
                 "name": p.translate_name(), "stem": stem,
                 "lu_star": y_map["祿"], "ji_star": y_map["忌"],
-                "lu_dest": lu_dest, "ji_dest": ji_dest,
+                "lu_dest": self.f_dest_by_branch(b_idx, "祿"),
+                "ji_dest": self.f_dest_by_branch(b_idx, "忌"),
                 "logic": y_map["logic"],
-                "collision": f"獲利鏈條延伸至 {lu_dest}，同步防範 {ji_dest} 的風險傳導。"
+                "collision": f"獲利鏈條延伸至 {self.f_dest_by_branch(b_idx, '祿')}，同步防範 {self.f_dest_by_branch(b_idx, '忌')} 的風險傳導。"
             }
         return res
 

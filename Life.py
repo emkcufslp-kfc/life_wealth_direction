@@ -134,7 +134,7 @@ if menu == "🚀 核心財務審計":
             focus_fly = fly_data[st.session_state.focus_idx]
             
             rep_star = focus_fly['lu_star'] if focus_fly['lu_star'] in st.session_state.engine.CEO_IMAGES else (focus_p['major_stars'][0] if focus_p['major_stars'] else "紫微")
-            rep_img = st.session_state.engine.get_image_base64(st.session_state.engine.CEO_IMAGES.get(rep_star, "zi_wei_emperor.png"))
+            rep_img = st.session_state.engine.get_image_base64(rep_star)
             
             st.markdown('<div class="decision-center">', unsafe_allow_html=True)
             if rep_img:
@@ -262,7 +262,7 @@ if menu == "🚀 核心財務審計":
         st.subheader("📚 專業財富策略存檔")
         with open("assets/Logic.md", "r", encoding="utf-8") as f: content = f.read()
         import re
-        sections = re.split(r'(logic_\d\.jpg:?)', content)
+        sections = re.split(r'(logic_\d\.jpg[:\s]*)', content)
         for i in range(1, len(sections), 2):
             img_name = sections[i].replace(":", "").strip()
             text_content = sections[i+1].strip() if i+1 < len(sections) else ""
