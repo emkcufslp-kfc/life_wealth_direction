@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 class ZiWeiEngine:
-    VERSION_ID = "v6.32-INSTITUTIONAL-HARDENED"
+    VERSION_ID = "v6.33-GRID-STABILIZED"
     ROOT_DIR = Path(__file__).parent.parent
     ASSETS_DIR = ROOT_DIR / "assets"
     
@@ -23,7 +23,7 @@ class ZiWeiEngine:
         "癸": {"祿": "破軍", "權": "巨門", "科": "太陰", "忌": "貪狼", "logic": "暴力破局：競爭與貪婪風險"}
     }
 
-    # Absolute Internal-to-Traditional Star Mapping (Harden for Streamlit Cloud)
+    # Absolute Internal-to-Traditional Star Mapping
     STAR_MAP = {
         "ziweiMaj": "紫微", "tianjiMaj": "天機", "taiyangMaj": "太陽", "wuquMaj": "武曲", 
         "tiantongMaj": "天同", "lianzhenMaj": "廉貞", "tianfuMaj": "天府", "taiyinMaj": "太陰", 
@@ -34,8 +34,13 @@ class ZiWeiEngine:
         "huoxingMin": "火星", "lingxingMin": "鈴星", "dikongMin": "地空", "dijieMin": "地劫"
     }
 
-    # Institutional Star Classifications (Set for membership checks)
-    STARS_CHINESE = set(STAR_MAP.values())
+    # Earthly Branch Ordering (0 = 子, 1 = 丑 ... 11 = 亥)
+    BRANCH_ORDER = {
+        "ziEarthly": 0, "chouEarthly": 1, "yinEarthly": 2, "maoEarthly": 3,
+        "chenEarthly": 4, "siEarthly": 5, "wuEarthly": 6, "weiEarthly": 7,
+        "shenEarthly": 8, "youEarthly": 9, "xuEarthly": 10, "haiEarthly": 11
+    }
+
     LUCKY_STARS = {"文昌", "文曲", "左輔", "右弼", "天魁", "天鉞", "祿存", "天馬"}
     SHA_STARS = {"擎羊", "陀羅", "火星", "鈴星", "地空", "地劫"}
 
@@ -54,15 +59,15 @@ class ZiWeiEngine:
             self.astro = iztro.by_lunar(solar_date, hour, self.gender_str)
         else:
             self.astro = iztro.by_solar(solar_date, hour, self.gender_str)
-        # Verify loading logic
         print(f"[{self.VERSION_ID}] ZiWeiEngine Initialized for {solar_date}")
 
     def _translate(self, star):
-        """Hardened translation with fallback."""
         return self.STAR_MAP.get(star.name, star.translate_name())
 
+    def _get_branch_idx(self, p):
+        return self.BRANCH_ORDER.get(p.earthly_branch, 0)
+
     def get_image_base64(self, image_name):
-        # image_name is the Chinese star name
         filename = image_name if image_name.endswith(".png") else self.CEO_IMAGES.get(image_name, "")
         if not filename: return ""
         path = self.ASSETS_DIR / filename
@@ -71,20 +76,22 @@ class ZiWeiEngine:
             return base64.b64encode(f.read()).decode()
 
     def get_astrolabe_data(self):
+        """Returns astrolabe data indexed by Earthly Branch (0-11)."""
         res = {}
-        for i, p in enumerate(self.astro.palaces):
+        for p in self.astro.palaces:
+            b_idx = self._get_branch_idx(p)
             all_stars = p.major_stars + p.minor_stars + p.adjective_stars
             major_names = [self._translate(s) for s in p.major_stars]
             lucky_names = [self._translate(s) for s in all_stars if self._translate(s) in self.LUCKY_STARS]
             sha_names = [self._translate(s) for s in all_stars if self._translate(s) in self.SHA_STARS]
             
-            res[i] = {
+            res[b_idx] = {
                 "name": p.translate_name(),
                 "stem": p.translate_heavenly_stem(),
                 "major_stars": major_names,
                 "lucky_stars": lucky_names,
                 "sha_stars": sha_names,
-                "lucky_stars_ext": lucky_names, # For Life.py
+                "lucky_stars_ext": lucky_names,
                 "sha_stars_ext": sha_names
             }
         return res
@@ -106,20 +113,23 @@ class ZiWeiEngine:
         soul_star = self._translate(soul_p.major_stars[0]) if soul_p.major_stars else "紫微"
         innate_dist = self.get_innate_distribution()
         
-        soul_idx = [i for i, p in enumerate(self.astro.palaces) if p.name == "soulPalace"][0]
-        wealth_idx = [i for i, p in enumerate(self.astro.palaces) if p.name == "wealthPalace"][0]
-        property_idx = [i for i, p in enumerate(self.astro.palaces) if p.name == "propertyPalace"][0]
+        soul_idx = self._get_branch_idx(soul_p)
+        wealth_p = [p for p in self.astro.palaces if p.name == "wealthPalace"][0]
+        wealth_idx = self._get_branch_idx(wealth_p)
+        property_p = [p for p in self.astro.palaces if p.name == "propertyPalace"][0]
+        property_idx = self._get_branch_idx(property_p)
         
         return {
             "ceo": {"star": soul_star, "image": soul_star},
             "innate": {"stem": self.astro.chinese_date[0], "stars": innate_dist["stars"]},
-            "soul": {"layer2": {"lu": {"dest": self.f_dest_by_idx(soul_idx, "祿")}, "ji": {"dest": self.f_dest_by_idx(soul_idx, "忌")}}},
-            "wealth": {"layer2": {"lu": {"dest": self.f_dest_by_idx(wealth_idx, "祿")}, "ji": {"dest": self.f_dest_by_idx(wealth_idx, "忌")}}},
-            "property": {"layer2": {"lu": {"dest": self.f_dest_by_idx(property_idx, "祿")}, "ji": {"dest": self.f_dest_by_idx(property_idx, "忌")}}}
+            "soul": {"layer2": {"lu": {"dest": self.f_dest_by_branch(soul_idx, "祿")}, "ji": {"dest": self.f_dest_by_branch(soul_idx, "忌")}}},
+            "wealth": {"layer2": {"lu": {"dest": self.f_dest_by_branch(wealth_idx, "祿")}, "ji": {"dest": self.f_dest_by_branch(wealth_idx, "忌")}}},
+            "property": {"layer2": {"lu": {"dest": self.f_dest_by_branch(property_idx, "祿")}, "ji": {"dest": self.f_dest_by_branch(property_idx, "忌")}}}
         }
 
-    def f_dest_by_idx(self, idx, target_type):
-        source_p = self.astro.palaces[idx]
+    def f_dest_by_branch(self, b_idx, target_type):
+        """Calculates flying star destination starting from a specific branch index."""
+        source_p = next(p for p in self.astro.palaces if self._get_branch_idx(p) == b_idx)
         stem = source_p.translate_heavenly_stem()
         target_star = self.SI_HUA_MAP_TRAD[stem][target_type]
         for dp in self.astro.palaces:
@@ -128,13 +138,15 @@ class ZiWeiEngine:
         return "未知"
 
     def fly_all_palaces(self):
+        """Returns flying star data indexed by Earthly Branch (0-11)."""
         res = {}
-        for i, p in enumerate(self.astro.palaces):
+        for p in self.astro.palaces:
+            b_idx = self._get_branch_idx(p)
             stem = p.translate_heavenly_stem()
             y_map = self.SI_HUA_MAP_TRAD[stem]
-            lu_dest = self.f_dest_by_idx(i, "祿")
-            ji_dest = self.f_dest_by_idx(i, "忌")
-            res[i] = {
+            lu_dest = self.f_dest_by_branch(b_idx, "祿")
+            ji_dest = self.f_dest_by_branch(b_idx, "忌")
+            res[b_idx] = {
                 "name": p.translate_name(), "stem": stem,
                 "lu_star": y_map["祿"], "ji_star": y_map["忌"],
                 "lu_dest": lu_dest, "ji_dest": ji_dest,
