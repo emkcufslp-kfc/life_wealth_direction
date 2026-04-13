@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 class ZiWeiEngine:
-    VERSION_ID = "v6.33-GRID-STABILIZED"
+    VERSION_ID = "v6.34-DYNAMIC-AUDIT"
     ROOT_DIR = Path(__file__).parent.parent
     ASSETS_DIR = ROOT_DIR / "assets"
     
@@ -32,6 +32,24 @@ class ZiWeiEngine:
         "zuofuMin": "左輔", "youbiMin": "右弼", "tiankuiMin": "天魁", "tianyueMin": "天鉞", 
         "lucunMin": "祿存", "tianmaMin": "天馬", "qingyangMin": "擎羊", "tuoluoMin": "陀羅", 
         "huoxingMin": "火星", "lingxingMin": "鈴星", "dikongMin": "地空", "dijieMin": "地劫"
+    }
+
+    # Institutional Star Profiles (HK Comic Style Strategic Narratives)
+    STAR_PROFILES = {
+        "紫微": "統籌全局、建立規範、分配資源、引領方向。專案管理在混亂中建立清晰規範，帶領跨部門團隊達成目標。",
+        "天機": "拆解複雜資訊、預測趨勢、策劃路徑、優化流程。數據分析開發精準預測模型，找出系統漏洞並提供最優解法。",
+        "太陽": "溫暖他人、傳遞理念、照亮盲點、無私奉獻。教育心理學透過渲染力演說啟發潛能，建立高凝聚力社群。",
+        "武曲": "果斷執行、精算風險、管理財務、捍衛成果。財務金融在極端壓力下做出精準投資決策，確保資源最大化。",
+        "天同": "營造和諧、化解衝突、凝聚共識、傾聽需求。人力資源管理平衡各方矛盾利益，打造具心理安全感的企業文化。",
+        "廉貞": "堅持目標、敏銳洞察、建立公關、掌控邊界。危機公關在公關危機時精準洞察大眾心理，以手腕力挽狂瀾。",
+        "天府": "守成穩健、構築安全感、穩步擴張、風險控管。營運管理接手搖搖欲墜的專案，透過資源調度使其穩定獲利。",
+        "太陰": "關注細節、感受情緒、營造美感、計畫長遠。空間/介面設計捕捉微小情感需求，設計兼具美感與無縫體驗的服務。",
+        "貪狼": "建立連結、挖掘欲望、跨界融合、煽動情緒。數位行銷掌握市場潛在慾望，策劃跨界病毒行銷抓住大眾眼球。",
+        "巨門": "深度剖析、精準表達、邏輯辯論、直指核心。法律/調查報導抽絲剝繭龐雜資訊，透過嚴密邏輯揭露真相贏得辯論。",
+        "天相": "協調利益、維護正義、輔助決策、優化外觀。跨國談判作為絕對中立橋樑協調矛盾，以高品味提升品牌形象。",
+        "天梁": "庇蔭他人、傳承經驗、排解糾紛、制定紀律。醫療照護/顧問在緊急狀態保持冷靜，依經驗制定計畫成為精神支柱。",
+        "七殺": "鎖定目標、承擔高風險、獨當一面、不畏權威。新創企業拓展在荒野市場中單槍匹馬殺出重圍，迅速奪下市佔率。",
+        "破軍": "打破常規、顛覆體制、破而後立、徹底重組。破壞性產品設計淘汰僵化系統，開發顛覆市場常理的全新破壞性解法。"
     }
 
     # Earthly Branch Ordering (0 = 子, 1 = 丑 ... 11 = 亥)
@@ -110,21 +128,23 @@ class ZiWeiEngine:
 
     def get_wealth_audit(self):
         soul_p = [p for p in self.astro.palaces if p.name == "soulPalace"][0]
-        soul_star = self._translate(soul_p.major_stars[0]) if soul_p.major_stars else "紫微"
+        soul_stars = [self._translate(s) for s in soul_p.major_stars] if soul_p.major_stars else ["紫微"]
         innate_dist = self.get_innate_distribution()
         
         soul_idx = self._get_branch_idx(soul_p)
         wealth_p = [p for p in self.astro.palaces if p.name == "wealthPalace"][0]
+        wealth_stars = [self._translate(s) for s in wealth_p.major_stars] if wealth_p.major_stars else ["武曲"]
         wealth_idx = self._get_branch_idx(wealth_p)
         property_p = [p for p in self.astro.palaces if p.name == "propertyPalace"][0]
+        property_stars = [self._translate(s) for s in property_p.major_stars] if property_p.major_stars else ["天府"]
         property_idx = self._get_branch_idx(property_p)
         
         return {
-            "ceo": {"star": soul_star, "image": soul_star},
+            "ceo": {"star": " / ".join(soul_stars), "image": soul_stars[0], "profiles": [{"star": s, "desc": self.STAR_PROFILES.get(s, "")} for s in soul_stars]},
             "innate": {"stem": self.astro.chinese_date[0], "stars": innate_dist["stars"]},
-            "soul": {"layer2": {"lu": {"dest": self.f_dest_by_branch(soul_idx, "祿")}, "ji": {"dest": self.f_dest_by_branch(soul_idx, "忌")}}},
-            "wealth": {"layer2": {"lu": {"dest": self.f_dest_by_branch(wealth_idx, "祿")}, "ji": {"dest": self.f_dest_by_branch(wealth_idx, "忌")}}},
-            "property": {"layer2": {"lu": {"dest": self.f_dest_by_branch(property_idx, "祿")}, "ji": {"dest": self.f_dest_by_branch(property_idx, "忌")}}}
+            "soul": {"stars": soul_stars, "profiles": [{"star": s, "desc": self.STAR_PROFILES.get(s, "")} for s in soul_stars], "layer2": {"lu": {"dest": self.f_dest_by_branch(soul_idx, "祿")}, "ji": {"dest": self.f_dest_by_branch(soul_idx, "忌")}}},
+            "wealth": {"stars": wealth_stars, "profiles": [{"star": s, "desc": self.STAR_PROFILES.get(s, "")} for s in wealth_stars], "layer2": {"lu": {"dest": self.f_dest_by_branch(wealth_idx, "祿")}, "ji": {"dest": self.f_dest_by_branch(wealth_idx, "忌")}}},
+            "property": {"stars": property_stars, "profiles": [{"star": s, "desc": self.STAR_PROFILES.get(s, "")} for s in property_stars], "layer2": {"lu": {"dest": self.f_dest_by_branch(property_idx, "祿")}, "ji": {"dest": self.f_dest_by_branch(property_idx, "忌")}}}
         }
 
     def f_dest_by_branch(self, b_idx, target_type):

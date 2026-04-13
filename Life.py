@@ -172,57 +172,59 @@ if menu == "🚀 核心財務審計":
     st.divider()
     t1, t2, t3, tx, t4, t5 = st.tabs(["🏎️ 決策部", "💸 業務部", "🏰 金庫部", "🎯 先天格局", "🛰️ 12宮連鎖", "📚 文庫指南"])
     
-    def render_dept(title, d):
-        st.markdown(f"### 🛡️ {title} 營運報表")
-        cl, cr = st.columns(2)
-        with cl: st.success(f"📈 資源投放 ➔ {d['layer2']['lu']['dest']}\n\n**核心流向導向位。**")
-        with cr: st.error(f"🛡️ 戰略防火牆 ➔ {d['layer2']['ji']['dest']}\n\n**核心風險防禦位。**")
-
     # Mapping Dept Data by Index to avoid name conflicts
     with t1: 
         st.markdown("### 🏎️ 決策部 (命宮) 核心戰略解析")
+        prof_html = ""
+        for p in audit['soul']['profiles']:
+            prof_html += f'<p><b>{p["star"]}</b> - {p["desc"]}</p>'
+        
         st.markdown(f"""
         <div style="background:white; border-left:5px solid #6366f1; border-radius:12px; padding:20px; margin-bottom:20px;">
             <h4 style="color:#6366f1 !important; margin-top:0;">🌟 核心主星才能 (The CEO Profile)</h4>
-            <p><b>紫微</b> - 統籌全局、建立規範、分配資源、引領方向。專案管理在混亂中建立清晰規範，帶領跨部門團隊達成目標。</p>
-            <p><b>貪狼</b> - 建立連結、挖掘欲望、跨界融合、煽動情緒。數位行銷掌握市場潛在慾望，策劃跨界病毒行銷抓住大眾眼球。</p>
+            {prof_html}
         </div>
         
         <div style="background:rgba(251,191,36,0.05); border:1px dashed #fbbf24; border-radius:12px; padding:20px;">
-            <h4 style="color:#d97706 !important; margin-top:0;">🛡️ 特殊格局與專家註記 (Special Combination)</h4>
-            <p><b>格局名稱：桃花犯主 (紫微 + 貪狼)</b></p>
-            <p>此格局結合了「帝王」的掌控欲與「貪狼」的強大社交手腕。在理財與事業上，具備極強的人際槓桿能力，適合經營高端公關、品牌溢價或跨界聯名項目。</p>
-            <p><b>專家筆記：</b> 現金流流向核心（星曜化祿 ➔ {audit['soul']['layer2']['lu']['dest']}），建議利用強大的人際社交圈，將品牌價值轉化為實體資產投資。</p>
+            <h4 style="color:#d97706 !important; margin-top:0;">🛡️ 專家戰略註記 (Strategy Note)</h4>
+            <p>命宮主導了您的決策基調與整體氣質。結合目前宮位配置，這套核心主星組合決定了您在理財與事業上的底層決策邏輯。</p>
+            <p><b>專家筆記：</b> 現金流流向核心（星曜化祿 ➔ {audit['soul']['layer2']['lu']['dest']}），建議利用主星的天賦優勢，將外部資源轉化為長期穩定的戰略資產。</p>
         </div>
         """, unsafe_allow_html=True)
     with t2: 
         st.markdown("### 💸 業務部 (財帛宮) 核心戰略解析")
+        prof_html = ""
+        for p in audit['wealth']['profiles']:
+            prof_html += f'<p><b>{p["star"]}</b> - {p["desc"]}</p>'
+            
         st.markdown(f"""
         <div style="background:white; border-left:5px solid #10b981; border-radius:12px; padding:20px; margin-bottom:20px;">
-            <h4 style="color:#10b981 !important; margin-top:0;">🌟 業務部核心能手 (The Disruptor Profile)</h4>
-            <p><b>破軍</b> - 打破常規、顛覆體制、破而後立、徹底重組。破壞性產品設計淘汰僵化系統，開發顛覆市場常理的全新破壞性解法。</p>
+            <h4 style="color:#10b981 !important; margin-top:0;">🌟 業務部核心能手 (The Business Profile)</h4>
+            {prof_html}
         </div>
         
         <div style="background:rgba(16,185,129,0.05); border:1px dashed #10b981; border-radius:12px; padding:20px;">
-            <h4 style="color:#059669 !important; margin-top:0;">🛡️ 財富戰略與專家註記 (Disruptive Wealth Strategy)</h4>
-            <p><b>特質分析：破而後立</b></p>
-            <p>此宮位具備強大的「破壞性創新」能量。求財模式不適合守舊模式，應專注於開發具備市場顛覆性的產品或服務。在變動中尋找商機，是此格局的核心財富引擎。</p>
-            <p><b>專家筆記：</b> 現金流流向核心（星曜化祿 ➔ {audit['wealth']['layer2']['lu']['dest']}），建議主動執行市場重組策略，利用變革期的混亂來確確立新的市場規則並獲取紅利。</p>
+            <h4 style="color:#059669 !important; margin-top:0;">🛡️ 財富戰略與專家註記 (Wealth Strategy)</h4>
+            <p>財帛宮具備強大的求財能量。此宮位的主星反映了您最擅長的盈利模式與市場開拓能力。</p>
+            <p><b>專家筆記：</b> 現金流流向核心（星曜化祿 ➔ {audit['wealth']['layer2']['lu']['dest']}），建議根據主星屬性執行對應的市場策略，利用變革或穩定來獲取紅利。</p>
         </div>
         """, unsafe_allow_html=True)
     with t3: 
         st.markdown("### 🏰 金庫部 (田宅宮) 核心戰略解析")
+        prof_html = ""
+        for p in audit['property']['profiles']:
+            prof_html += f'<p><b>{p["star"]}</b> - {p["desc"]}</p>'
+            
         st.markdown(f"""
         <div style="background:white; border-left:5px solid #3b82f6; border-radius:12px; padding:20px; margin-bottom:20px;">
             <h4 style="color:#3b82f6 !important; margin-top:0;">🌟 金庫部核心守衛 (The Treasurer Profile)</h4>
-            <p><b>天府</b> - 守成穩健、構築安全感、穩步擴張、風險控管。營運管理接手搖搖欲墜的專案，透過資源調度使其穩定獲利。</p>
+            {prof_html}
         </div>
         
         <div style="background:rgba(59,130,246,0.05); border:1px dashed #3b82f6; border-radius:12px; padding:20px;">
-            <h4 style="color:#1d4ed8 !important; margin-top:0;">🛡️ 資產防禦與專家註記 (The Ultimate Treasury Strategy)</h4>
-            <p><b>特質分析：金庫正位</b></p>
-            <p>此宮位代表了企業的總財庫。天府坐守，象徵資產結構穩健。應優先考慮實體資產與低風險、抗通膨的標的。穩步擴張而非激進投機，是確保長期財富累積的關鍵策略。</p>
-            <p><b>專家筆記：</b> 現金流流向核心（星曜化祿 ➔ {audit['property']['layer2']['lu']['dest']}），建議將業務部的利潤定期轉化為「磚頭」或「金磚」，利用穩紮穩打的物理防禦力來抵禦外界波動。</p>
+            <h4 style="color:#1d4ed8 !important; margin-top:0;">🛡️ 資產防禦與專家註記 (Treasury Strategy)</h4>
+            <p>此宮位代表了企業的總財庫。主星坐守的情況，決定了資產結構的穩定程度。應根據主星特性，在實體資產與風險投資之間取得平衡。</p>
+            <p><b>專家筆記：</b> 現金流流向核心（星曜化祿 ➔ {audit['property']['layer2']['lu']['dest']}），建議將利潤轉化為符合主星特質的資產形態，利用穩健的防禦力來抵禦外界波動。</p>
         </div>
         """, unsafe_allow_html=True)
     with tx:
