@@ -7,6 +7,7 @@ from pathlib import Path
 class ZiWeiEngine:
     ROOT_DIR = Path(__file__).parent.parent
     ASSETS_DIR = ROOT_DIR / "assets"
+    
     # 欽天門四化配置 (Institutional Ground Truth)
     SI_HUA_MAP_TRAD = {
         "甲": {"祿": "廉貞", "權": "破軍", "科": "武曲", "忌": "太陽", "logic": "核心啟動：權威與擴張"},
@@ -43,12 +44,11 @@ class ZiWeiEngine:
             self.astro = iztro.by_solar(solar_date, hour, self.gender_str)
 
     def get_image_base64(self, image_name):
+        # image_name is now the translated Chinese star name
         filename = image_name if image_name.endswith(".png") else self.CEO_IMAGES.get(image_name, "")
         if not filename: 
-            mapping = { "紫微": "zi_wei_emperor.png", "天機": "tian_ji_strategist.png", "太陽": "tai_yang_sun.png", "武曲": "wu_qu_executor.png", "天同": "tian_tong_harmonizer.png", "廉貞": "lian_zhen_crisis_pr.png", "天府": "tian_fu_treasurer.png", "太陰": "tai_yin_designer.png", "貪狼": "tan_lang_marketer.png", "巨門": "ju_men_truth_seeker.png", "天相": "tian_xiang_negotiator.png", "天梁": "tian_liang_protector.png", "七殺": "qi_sha_conqueror.png", "破軍": "po_jun_rebel.png" }
-            filename = mapping.get(image_name, "")
+            return ""
         
-        if not filename: return ""
         path = self.ASSETS_DIR / filename
         if not path.exists(): return ""
         with open(path, "rb") as f:
@@ -58,14 +58,18 @@ class ZiWeiEngine:
         res = {}
         for i, p in enumerate(self.astro.palaces):
             all_stars = p.major_stars + p.minor_stars + p.adjective_stars
+            major_names = [s.translate_name() for s in p.major_stars]
+            lucky_names = [s.translate_name() for s in all_stars if s.translate_name() in self.LUCKY_STARS]
+            sha_names = [s.translate_name() for s in all_stars if s.translate_name() in self.SHA_STARS]
+            
             res[i] = {
                 "name": p.translate_name(),
                 "stem": p.translate_heavenly_stem(),
-                "major_stars": [s.name for s in p.major_stars],
-                "lucky_stars": [s.name for s in all_stars if s.name in self.LUCKY_STARS],
-                "sha_stars": [s.name for s in all_stars if s.name in self.SHA_STARS],
-                "lucky_stars_ext": [s.name for s in p.minor_stars if s.name in self.LUCKY_STARS], # for compatibility
-                "sha_stars_ext": [s.name for s in p.minor_stars if s.name in self.SHA_STARS]
+                "major_stars": major_names,
+                "lucky_stars": lucky_names,
+                "sha_stars": sha_names,
+                "lucky_stars_ext": [s.translate_name() for s in p.minor_stars if s.translate_name() in self.LUCKY_STARS], # for compatibility
+                "sha_stars_ext": [s.translate_name() for s in p.minor_stars if s.translate_name() in self.SHA_STARS]
             }
         return res
 
@@ -76,14 +80,14 @@ class ZiWeiEngine:
         for key in ["祿", "權", "科", "忌"]:
             target_star = y_map[key]
             for p in self.astro.palaces:
-                all_stars = [s.name for s in p.major_stars + p.minor_stars + p.adjective_stars]
+                all_stars = [s.translate_name() for s in p.major_stars + p.minor_stars + p.adjective_stars]
                 if target_star in all_stars:
                     res["stars"][key] = {"star": target_star, "palace": p.translate_name()}
         return res
 
     def get_wealth_audit(self):
         soul_p = [p for p in self.astro.palaces if p.name == "soulPalace"][0]
-        soul_star = soul_p.major_stars[0].name if soul_p.major_stars else "紫微"
+        soul_star = soul_p.major_stars[0].translate_name() if soul_p.major_stars else "紫微"
         innate_dist = self.get_innate_distribution()
         
         # Build institutional legacy layers for Life.py
@@ -104,7 +108,7 @@ class ZiWeiEngine:
         stem = source_p.translate_heavenly_stem()
         target_star = self.SI_HUA_MAP_TRAD[stem][target_type]
         for dp in self.astro.palaces:
-            d_stars = [s.name for s in dp.major_stars + dp.minor_stars + dp.adjective_stars]
+            d_stars = [s.translate_name() for s in dp.major_stars + dp.minor_stars + dp.adjective_stars]
             if target_star in d_stars: return dp.translate_name()
         return "未知"
 
