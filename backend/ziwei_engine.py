@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 class ZiWeiEngine:
-    VERSION_ID = "v6.38-IMAGE-STABILIZED"
+    VERSION_ID = "v6.39-PRODUCTION-STABILIZED"
     ROOT_DIR = Path(__file__).parent.parent
     ASSETS_DIR = ROOT_DIR / "assets"
     

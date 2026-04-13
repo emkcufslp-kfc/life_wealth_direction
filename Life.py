@@ -118,7 +118,7 @@ if menu == "🚀 核心財務審計":
     fly_data = st.session_state.fly_data
 
     st.markdown(f"""<div class="ceo-card">
-        <img src="data:image/png;base64,{st.session_state.engine.get_image_base64(audit["ceo"]["image"])}" width="80">
+        <img src="{st.session_state.engine.get_image_base64(audit["ceo"]["image"])}" width="80" style="border-radius:10px; border:2px solid #6366f1;">
         <div><div style="font-size:1.6rem; font-weight:900;">⚖️ 執行長 (CEO)：{audit["ceo"]["star"]}</div><div>具備核心決策素質。</div></div>
     </div>""", unsafe_allow_html=True)
 
