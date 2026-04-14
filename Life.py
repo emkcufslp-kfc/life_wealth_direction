@@ -194,7 +194,8 @@ if menu == "🚀 核心財務審計":
         st.subheader("🏁 首席審計診斷")
         st.markdown(f'<div style="background:white; border:1px solid #ef4444; border-radius:15px; padding:20px; font-size:0.9rem;"><h4 style="color:#ef4444 !important; margin-top:0;">🎯 先天資本 (年生：{audit["innate"]["stem"]})</h4>', unsafe_allow_html=True)
         for t, d in audit['innate']['stars'].items(): 
-            st.markdown(f"**{t}**：<span style='color:#d97706; font-weight:800;'>{d['star']}</span> ➔ {d['palace']}", unsafe_allow_html=True)
+            p_display = st.session_state.engine.PALACE_NAME_MAP.get(d['palace'], d['palace'])
+            st.markdown(f"**{t}**：<span style='color:#d97706; font-weight:800;'>{d['star']}</span> ➔ {p_display}", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
     # --- RESTORED AUDIT TABS ---
     st.divider()
@@ -256,8 +257,27 @@ if menu == "🚀 核心財務審計":
         </div>
         """, unsafe_allow_html=True)
     with tx:
+        st.markdown("### 🎯 先天格局 (Innate Matrix) 全維度戰略審計")
+        st.info("💡 此表分析您與生俱來的能量分配。化祿代表獲利機遇，化忌代表風險盲點。")
         for p in st.session_state.engine.get_innate_audit():
-            st.markdown(f'<div style="background:white; border:1px solid #e2e8f0; border-radius:12px; margin-bottom:15px; padding:20px;">{p["header"]}<br><br>{p["palace_def"]}<br><br>* **深層意義**：{p["meaning"]}<br>* **具體影響**：{p["impact"]}</div>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="background:white; border:1px solid #e2e8f0; border-radius:12px; margin-bottom:20px; padding:25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                <h4 style="color:#1e3a8a !important; margin-top:0; border-bottom:2px solid #f1f5f9; padding-bottom:10px;">{p["header"]}</h4>
+                <p style="color:#475569; font-weight:600; font-size:1rem;">{p["palace_def"]}</p>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-top:15px;">
+                    <div style="background:#f8fafc; padding:15px; border-radius:8px; border-left:4px solid #6366f1;">
+                        <small style="color:#6366f1; font-weight:bold; text-transform:uppercase;">核心策略 (SOP)</small><br>
+                        <span style="color:#1e293b; font-size:0.95rem;">{p["meaning"]}</span>
+                    </div>
+                    <div style="background:#fff7ed; padding:15px; border-radius:8px; border-left:4px solid #f59e0b;">
+                        <small style="color:#f59e0b; font-weight:bold; text-transform:uppercase;">具體影響 (Impact)</small><br>
+                        <span style="color:#1e293b; font-size:0.95rem;">{p["impact"]}</span>
+                    </div>
+                </div>
+                <div style="margin-top:15px; background:rgba(99,102,241,0.05); padding:10px; border-radius:6px; font-size:0.9rem; color:#4338ca;">
+                    <b>📍 專家決策建議：</b> {p["sop"]}
+                </div>
+            </div>""", unsafe_allow_html=True)
     with t4:
         st.markdown("### 🛰️ 偵察部 (12宮連鎖) 戰略路徑審計")
         st.info("💡 此表分析企業內部 12 個部門的橫向聯繫與資源消耗路徑，核心在於觀察『化祿』的獲利供給與『化忌』的風險傳導。")
