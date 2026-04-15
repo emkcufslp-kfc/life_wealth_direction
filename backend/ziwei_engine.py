@@ -224,13 +224,12 @@ class ZiWeiEngine:
     def _clean_palace_name(self, name):
         """Standardize palace names (e.g., '交友宮 (庚干)' -> '交友宮') for robust lookup."""
         if not name: return "未知"
-        # Extract everything before the first space or parenthesis
         import re
-        base = re.split(r'[\s\(]', name)[0]
-        # Replace simplified 宫 with traditional 宮
-        base = base.replace("宫", "宮")
-        # Ensure it ends with '宮' for consistency
-        if not base.endswith("宮") and base != "未知":
+        base = re.split(r'[\s\(]', name)[0].strip()
+        # Clean up any existing '宮' or '宫' characters
+        base = base.replace("宫", "").replace("宮", "")
+        # Always append exactly one '宮'
+        if base != "未知" and base != "":
             base += "宮"
         return base
 
@@ -375,10 +374,19 @@ class ZiWeiEngine:
             subject = PALACE_SUBJECTS.get(p_name, "該宮位")
             clash_detail = CLASH_IMPACT.get(self._clean_palace_name(clash_palace), "影響深遠")
 
+            intent_str = (
+                f"<div style='margin-bottom:6px;'><span style='color:#059669;font-weight:900;'>🟢 【祿入】 (動能注入)：</span>"
+                f"[{stem}干] 賦予『{stem_orig['lu_star']}』擴張能量 (含義：{stem_orig['lu_mean']})，"
+                f"將本宮【{src_orig['lu']}】的資源，源源不絕地輸送給 ➔ 『{lu_dest}』，使其大幅受益。</div>"
+                f"<div><span style='color:#dc2626;font-weight:900;'>🔴 【忌入】 (風險轉嫁)：</span>"
+                f"[{stem}干] 導致『{stem_orig['ji_star']}』產生缺陷 (含義：{stem_orig['ji_mean']})，"
+                f"夾帶著【{src_orig['ji']}】的隱患，直接衝擊 ➔ 『{ji_dest}』，造成該區域壓力甚至破洞。</div>"
+            )
+
             res[b_idx] = {
                 "name": p_name, "stem": stem,
                 "path": f"【{p_name} ({stem})】 ➔ {stem_orig['lu_star']}祿入 {lu_dest} / {stem_orig['ji_star']}忌入 {ji_dest}",
-                "intent": f"供給鏈：{src_orig['lu']} ➔ {lu_dest}受益；風險鏈：{src_orig['ji']} ➔ {ji_dest}受損",
+                "intent": intent_str,
                 "lu_star": stem_orig["lu_star"], "ji_star": stem_orig["ji_star"],
                 "lu_dest": lu_dest, "ji_dest": ji_dest,
                 "lu_means": stem_orig["lu_mean"], "lu_effect": lu_imp["lu"],
