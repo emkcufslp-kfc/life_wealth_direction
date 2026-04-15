@@ -65,7 +65,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("⚖️ 紫微財務風控系統：Institutional Flagship")
+st.title("⚖️ 紫微財務風控系統：Institutional Flagship (v6.50-GOLD)")
 
 # --- Sidebar ---
 st.sidebar.title("🗂️ 系統導航")
