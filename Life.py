@@ -102,7 +102,7 @@ def render_strategic_library():
         st.error(f"⚠️ 載入庫房時發生錯誤: {e}")
 
 if menu == "🚀 核心財務審計":
-    b_date = st.sidebar.date_input("出生日期", datetime.date(1971, 11, 18))
+    b_date = st.sidebar.date_input("出生日期", datetime.date(1971, 11, 18), min_value=datetime.date(1920, 1, 1), max_value=datetime.date(2050, 12, 31))
     times = ["子時", "丑時", "寅時", "卯時", "辰時", "巳時", "午時", "未時", "申時", "酉時", "戌時", "亥時"]
     b_hour_raw = st.sidebar.selectbox("時辰", times, index=2)
     b_hour, gender, is_lunar = times.index(b_hour_raw), st.sidebar.radio("性別", ["男", "女"]), st.sidebar.checkbox("農曆")
