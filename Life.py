@@ -285,55 +285,47 @@ if menu == "🚀 核心財務審計":
         st.info("💡 此模組透過『發射站 ➔ 能量載體 ➔ 落點效應』三位一體邏輯，鎖定企業內部的獲利動能與風險破洞。")
         
         for p_idx, p_d in fly_data.items():
+            # Narrative Diagnosis Sentence based on MD formula
+            # [發射宮位] 透過 [星曜化忌] 的性質，影響了 [落點宮位]，並沖擊 [對宮]
+            source_subject = p_d.get('name', '該位').replace('宮', '')
+            hazard = p_d.get('ji_hazard', '風險')
+            ji_dest = p_d.get('ji_dest', '落點').replace('宮', '')
+            clash_target = p_d.get('clash', '對宮').replace('宮', '')
+            
+            narrative = f"「我的{source_subject}因為{hazard}，導致{ji_dest}受損，並直接沖擊{clash_target}。」"
+            
             st.markdown(f"""
-            <div style="background:white; border:1px solid #e2e8f0; border-radius:15px; padding:25px; margin-bottom:20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                <!-- Header -->
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #f1f5f9; padding-bottom:12px; margin-bottom:15px;">
-                    <h3 style="margin:0; color:#1e293b; font-weight:900;">🏢 {p_d.get('name', '未知')} ({p_d.get('stem', '?')}干)</h3>
-                    <span style="background:#f1f5f9; color:#64748b; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">Diagnostic Cluster #{p_idx+1}</span>
-                </div>
-                
-                <!-- Step 1: Source -->
-                <div style="background:rgba(99,102,241,0.03); border:1px solid rgba(99,102,241,0.1); border-radius:8px; padding:12px; margin-bottom:15px;">
-                    <div style="color:#6366f1; font-weight:800; font-size:0.85rem; text-transform:uppercase; margin-bottom:4px;">🚀 步驟 1: 發射站 (Source Intent)</div>
-                    <div style="color:#1e293b; font-size:0.95rem;">{p_d.get('source_msg', '請點擊【重置全系統審計】以載入新邏輯')}</div>
-                </div>
-                
-                <!-- Step 2 & 3: Carriers -->
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
-                    <!-- Lu Chain -->
-                    <div style="background:rgba(16,185,129,0.02); border:1px solid rgba(16,185,129,0.1); border-left:5px solid #10b981; padding:15px; border-radius:8px;">
-                        <div style="color:#10b981; font-weight:800; font-size:0.85rem; margin-bottom:8px;">📈 獲利鏈 (Profit Chain)</div>
-                        <div style="font-weight:900; color:#065f46; font-size:1.1rem; margin-bottom:5px;">{p_d.get('lu_star', '化祿')} ➔ {p_d.get('lu_dest', '未知')}</div>
-                        <div style="font-size:0.85rem; color:#047857; margin-bottom:4px;"><b>手段：</b>{p_d.get('lu_means', 'N/A')}</div>
-                        <div style="font-size:0.85rem; color:#047857;"><b>效果：</b>{p_d.get('lu_effect', 'N/A')}</div>
-                    </div>
-                    
-                    <!-- Ji Chain -->
-                    <div style="background:rgba(239,68,68,0.02); border:1px solid rgba(239,68,68,0.1); border-left:5px solid #ef4444; padding:15px; border-radius:8px;">
-                        <div style="color:#ef4444; font-weight:800; font-size:0.85rem; margin-bottom:8px;">🛡️ 風險鏈 (Risk Chain)</div>
-                        <div style="font-weight:900; color:#991b1b; font-size:1.1rem; margin-bottom:5px;">{p_d.get('ji_star', '化忌')} ➔ {p_d.get('ji_dest', '未知')}</div>
-                        <div style="font-size:0.85rem; color:#b91c1c; margin-bottom:4px;"><b>隱患：</b>{p_d.get('ji_hazard', 'N/A')}</div>
-                        <div style="font-size:0.85rem; color:#b91c1c;"><b>衝擊：</b>{p_d.get('ji_effect', 'N/A')}</div>
-                    </div>
-                </div>
-                
-                <!-- Step 4: Clash Warning -->
-                <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:8px; padding:12px; margin-bottom:15px; display:flex; align-items:center; gap:10px;">
-                    <div style="font-size:1.5rem;">⚠️</div>
-                    <div>
-                        <div style="color:#9a3412; font-weight:800; font-size:0.85rem;">關鍵警報：忌沖擊宮位</div>
-                        <div style="color:#c2410c; font-size:0.9rem; font-weight:700;">化忌落入『{p_d.get('ji_dest', '未知')}』，直接沖擊對宮『{p_d.get('clash', '未知')}』。</div>
-                    </div>
-                </div>
-                
-                <!-- Prescription -->
-                <div style="background:#f8fafc; border-radius:10px; padding:15px; border:1px dashed #cbd5e1;">
-                    <div style="color:#475569; font-weight:800; font-size:0.85rem; margin-bottom:5px;">📍 首席審計官處方箋 (Expert Advice)</div>
-                    <div style="color:#1e293b; font-size:0.95rem; font-style:italic; line-height:1.4;">{p_d.get('advice', '請點擊重置按鈕更新數據')}</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+<div style="background:white; border:1px solid #e2e8f0; border-radius:15px; padding:25px; margin-bottom:20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #f1f5f9; padding-bottom:12px; margin-bottom:15px;">
+        <h3 style="margin:0; color:#1e293b; font-weight:900;">🏢 {p_d.get('name', '未知')} ({p_d.get('stem', '?')}干)</h3>
+        <span style="background:#f1f5f9; color:#64748b; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">Audit Cluster #{p_idx+1}</span>
+    </div>
+    
+    <div style="background:rgba(99,102,241,0.05); border-left:5px solid #6366f1; border-radius:8px; padding:15px; margin-bottom:20px;">
+        <div style="color:#4338ca; font-weight:800; font-size:1.1rem; margin-bottom:5px;">📝 專家全域診斷 (Strategic Audit)</div>
+        <div style="color:#1e293b; font-size:1.2rem; font-weight:600; line-height:1.6; font-family:'Noto Sans TC', sans-serif;">{narrative}</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+        <div style="background:rgba(16,185,129,0.02); border:1px solid rgba(16,185,129,0.1); border-left:5px solid #10b981; padding:15px; border-radius:8px;">
+            <div style="color:#10b981; font-weight:800; font-size:0.85rem; margin-bottom:8px;">📈 獲利路徑 (Profit Path)</div>
+            <div style="font-weight:900; color:#065f46; font-size:1rem; margin-bottom:5px;">{p_d.get('lu_star', '化祿')} ➔ {p_d.get('lu_dest', '未知')}</div>
+            <div style="font-size:0.85rem; color:#047857;">{p_d.get('lu_effect', 'N/A')}</div>
+        </div>
+        
+        <div style="background:rgba(239,68,68,0.02); border:1px solid rgba(239,68,68,0.1); border-left:5px solid #ef4444; padding:15px; border-radius:8px;">
+            <div style="color:#ef4444; font-weight:800; font-size:0.85rem; margin-bottom:8px;">🛡️ 風險陷阱 (Risk Trap)</div>
+            <div style="font-weight:900; color:#991b1b; font-size:1rem; margin-bottom:5px;">{p_d.get('ji_star', '化忌')} ➔ {p_d.get('ji_dest', '未知')}</div>
+            <div style="font-size:0.85rem; color:#b91c1c;">{p_d.get('ji_effect', 'N/A')} (沖擊{p_d.get('clash', '對宮')})</div>
+        </div>
+    </div>
+    
+    <div style="background:#f8fafc; border-radius:10px; padding:15px; border:1px dashed #cbd5e1;">
+        <div style="color:#475569; font-weight:800; font-size:0.85rem; margin-bottom:5px;">📍 首席審計官建議 (Prescription)</div>
+        <div style="color:#1e293b; font-size:0.95rem; font-style:italic;">{p_d.get('advice', '請點擊重置按鈕更新數據')}</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
     with t5:
         render_strategic_library()
 
