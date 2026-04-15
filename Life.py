@@ -330,7 +330,6 @@ if menu == "🚀 核心財務審計":
     </div>
 </div>
 """, unsafe_allow_html=True)
-""", unsafe_allow_html=True)
     with t5:
         render_strategic_library()
 
