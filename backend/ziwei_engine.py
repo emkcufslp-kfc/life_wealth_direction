@@ -221,6 +221,17 @@ class ZiWeiEngine:
     def _get_branch_idx(self, p):
         return self.BRANCH_ORDER.get(p.earthly_branch, 0)
 
+    def _clean_palace_name(self, name):
+        """Standardize palace names (e.g., '交友宮 (庚干)' -> '交友宮') for robust lookup."""
+        if not name: return "未知"
+        # Extract everything before the first space or parenthesis
+        import re
+        base = re.split(r'[\s\(]', name)[0]
+        # Ensure it ends with '宮' for consistency
+        if not base.endswith("宮") and base != "未知":
+            base += "宮"
+        return base
+
     def get_image_base64(self, image_name):
         """Unified image loader for star names and direct files (png/jpg)."""
         if not image_name: return ""
@@ -294,12 +305,13 @@ class ZiWeiEngine:
             d_stars = [self._translate(s) for s in dp.major_stars + dp.minor_stars + dp.adjective_stars]
             if target_star in d_stars: 
                 p_name_internal = dp.name
-                return self.PALACE_NAME_MAP.get(p_name_internal, dp.translate_name())
+                # Use cleaned name for consistent return type (standardized Traditional Chinese)
+                return self._clean_palace_name(self.PALACE_NAME_MAP.get(p_name_internal, dp.translate_name()))
         return "未知"
 
     def get_clash_palace(self, target_name):
         try:
-            clean_name = target_name.replace("宮", "") + "宮"
+            clean_name = self._clean_palace_name(target_name)
             idx = self.PALACE_LIST_ORDER.index(clean_name)
             return self.PALACE_LIST_ORDER[(idx + 6) % 12]
         except: return "對宮"
@@ -343,22 +355,23 @@ class ZiWeiEngine:
 
         for p in self.astro.palaces:
             b_idx = self._get_branch_idx(p)
-            p_name = p.translate_name()
+            p_name_raw = p.translate_name()
+            p_name = self._clean_palace_name(p_name_raw)
             stem = p.translate_heavenly_stem()
             
             lu_dest = self.f_dest_by_branch(b_idx, "祿")
             ji_dest = self.f_dest_by_branch(b_idx, "忌")
             
-            src_orig = self.SOURCE_RULES.get(p_name, {"lu": "未知", "ji": "未知"})
+            src_orig = self.SOURCE_RULES.get(p_name, {"lu": "供給不明", "ji": "風險不明"})
             stem_orig = self.STEM_RULES.get(stem, {"lu_star": "", "lu_mean": "", "ji_star": "", "ji_mean": ""})
-            lu_imp = self.IMPACT_RULES.get(lu_dest, {"lu": "現象不明"})
-            ji_imp = self.IMPACT_RULES.get(ji_dest, {"ji": "現象不明"})
+            lu_imp = self.IMPACT_RULES.get(self._clean_palace_name(lu_dest), {"lu": "現象不明"})
+            ji_imp = self.IMPACT_RULES.get(self._clean_palace_name(ji_dest), {"ji": "現象不明"})
             clash_palace = self.get_clash_palace(ji_dest)
             
             # Rich Narrative Synthesis
             stem_nar = STEM_NARRATIVE.get(stem, {"diag": "待定", "presc": []})
             subject = PALACE_SUBJECTS.get(p_name, "該宮位")
-            clash_detail = CLASH_IMPACT.get(clash_palace, "影響深遠")
+            clash_detail = CLASH_IMPACT.get(self._clean_palace_name(clash_palace), "影響深遠")
 
             res[b_idx] = {
                 "name": p_name, "stem": stem,
