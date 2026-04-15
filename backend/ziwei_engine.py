@@ -227,6 +227,8 @@ class ZiWeiEngine:
         # Extract everything before the first space or parenthesis
         import re
         base = re.split(r'[\s\(]', name)[0]
+        # Replace simplified 宫 with traditional 宮
+        base = base.replace("宫", "宮")
         # Ensure it ends with '宮' for consistency
         if not base.endswith("宮") and base != "未知":
             base += "宮"
