@@ -300,6 +300,41 @@ class ZiWeiEngine:
 
     def fly_all_palaces(self):
         res = {}
+        # Extended Diagnostic Metadata based on SOP
+        STEM_NARRATIVE = {
+            "甲": {"diag": "成也開創，敗也面子", "presc": ["避免過度擴張", "注意公關聲譽", "保護核心技術"]},
+            "乙": {"diag": "成也智慧，敗也情執", "presc": ["理財需抽離情緒", "防範資產套牢", "善用邏輯優勢"]},
+            "丙": {"diag": "成也人緣，敗也官非", "presc": ["合規審查優於一切", "保持行政透明", "善用調解手段"]},
+            "丁": {"diag": "成也細節，敗也口舌", "presc": ["謹言慎行防背刺", "保護核心資產", "防範合約暗樁"]},
+            "戊": {"diag": "成也應酬，敗也鑽牛角尖", "presc": ["適時止盈止損", "不要陷入單一邏輯", "保持思維靈活"]},
+            "己": {"diag": "成也實力，敗也合約", "presc": ["簽約必請法務檢查", "建立信用備忘錄", "防範金融文書詐欺"]},
+            "庚": {"diag": "成也名氣，敗也無福", "presc": ["平衡工作與享受", "防範過勞風險", "控制擴張規模"]},
+            "辛": {"diag": "成也嘴巴，敗也白紙黑字", "presc": ["談判由你負責", "簽字必請律師", "現金結算為先"]},
+            "壬": {"diag": "成也體制，敗也斷鏈", "presc": ["保留充足現金額度", "防範合資風險", "善用保險工具避險"]},
+            "癸": {"diag": "成也破局，敗也色難", "presc": ["建立人際邊界", "防範投機慾望", "專注於產業顛覆"]}
+        }
+
+        CLASH_IMPACT = {
+            "命宮": "最凶。自我運勢崩盤、意外車禍",
+            "兄弟宮": "損財(兄弟是財庫)、朋友借錢不還",
+            "夫妻宮": "因工作忽略家庭導致婚姻糾紛",
+            "子女宮": "子女離散、合夥拆夥、家變",
+            "財帛宮": "投資必敗、錯誤決策大損",
+            "疾厄宮": "身體受傷、官司纏身、情緒不穩",
+            "遷移宮": "意外車禍、社會壓力大、在外處處碰壁",
+            "交友宮": "損友、人際關係崩壞、現金流中斷",
+            "官祿宮": "影響工作運、事業不順",
+            "田宅宮": "庫存流失、財庫破洞、家道不穩",
+            "福德宮": "損財傷神、因錢財壓力焦慮",
+            "父母宮": "與長輩不和、文書法律糾紛"
+        }
+
+        PALACE_SUBJECTS = {
+            "命宮": "自己", "兄弟宮": "資金庫", "夫妻宮": "感情位", "子女宮": "投資位",
+            "財帛宮": "現金流", "疾厄宮": "實體位", "遷移宮": "社會位", "交友宮": "人脈位",
+            "官祿宮": "事業部", "田宅宮": "資產庫", "福德宮": "心智位", "父母宮": "法律位"
+        }
+
         for p in self.astro.palaces:
             b_idx = self._get_branch_idx(p)
             p_name = p.translate_name()
@@ -308,20 +343,34 @@ class ZiWeiEngine:
             lu_dest = self.f_dest_by_branch(b_idx, "祿")
             ji_dest = self.f_dest_by_branch(b_idx, "忌")
             
-            src_data = self.SOURCE_RULES.get(p_name, {"lu": "未知", "ji": "未知"})
-            stem_data = self.STEM_RULES.get(stem, {"lu_star": "", "lu_mean": "", "ji_star": "", "ji_mean": ""})
+            src_orig = self.SOURCE_RULES.get(p_name, {"lu": "未知", "ji": "未知"})
+            stem_orig = self.STEM_RULES.get(stem, {"lu_star": "", "lu_mean": "", "ji_star": "", "ji_mean": ""})
             lu_imp = self.IMPACT_RULES.get(lu_dest, {"lu": "現象不明"})
             ji_imp = self.IMPACT_RULES.get(ji_dest, {"ji": "現象不明"})
             clash_palace = self.get_clash_palace(ji_dest)
             
+            # Rich Narrative Synthesis
+            stem_nar = STEM_NARRATIVE.get(stem, {"diag": "待定", "presc": []})
+            subject = PALACE_SUBJECTS.get(p_name, "該宮位")
+            clash_detail = CLASH_IMPACT.get(clash_palace, "影響深遠")
+
             res[b_idx] = {
                 "name": p_name, "stem": stem,
-                "lu_star": stem_data["lu_star"], "ji_star": stem_data["ji_star"],
+                "path": f"【{p_name} ({stem})】 ➔ {stem_orig['lu_star']}祿入 {lu_dest} / {stem_orig['ji_star']}忌入 {ji_dest}",
+                "intent": f"供給鏈：{src_orig['lu']} ➔ {lu_dest}受益；風險鏈：{src_orig['ji']} ➔ {ji_dest}受損",
+                "lu_star": stem_orig["lu_star"], "ji_star": stem_orig["ji_star"],
                 "lu_dest": lu_dest, "ji_dest": ji_dest,
-                "source_msg": f"起因：{src_data['lu']} (祿因) / {src_data['ji']} (忌果)",
-                "lu_means": stem_data["lu_mean"], "lu_effect": lu_imp["lu"],
-                "ji_hazard": stem_data["ji_mean"], "ji_effect": ji_imp["ji"],
-                "clash": clash_palace, "advice": f"利用『{stem_data['lu_star']}』獲利，防範『{ji_dest}』風險，保住『{clash_palace}』。"
+                "lu_means": stem_orig["lu_mean"], "lu_effect": lu_imp["lu"],
+                "ji_hazard": stem_orig["ji_mean"], "ji_effect": ji_imp["ji"],
+                "clash": clash_palace,
+                "warnings": [
+                    f"{stem_orig['ji_star']}化忌主『{stem_orig['ji_mean']}』。",
+                    f"{ji_dest}是『{subject}』的變動位。{ji_imp['ji']}。",
+                    f"入{ji_dest}會直接衝擊『{clash_palace}』：{clash_detail}"
+                ],
+                "diagnosis": f"這是一個『{stem_nar['diag']}』的結構。能量流向：{stem}干讓你的{stem_orig['lu_star']}變強（擴張至{lu_dest}），但也讓{stem_orig['ji_star']}變脆（衝擊{ji_dest}）。",
+                "prescription": stem_nar["presc"],
+                "advice": f"利用『{stem_orig['lu_star']}』獲利，防範『{ji_dest}』風險，保住『{clash_palace}』。" # Legacy support
             }
         return res
 
