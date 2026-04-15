@@ -69,6 +69,7 @@ st.title("⚖️ 紫微財務風控系統：Institutional Flagship (v6.50-GOLD)"
 
 # --- Sidebar ---
 st.sidebar.title("🗂️ 系統導航")
+st.sidebar.caption("Build: v6.52-DIAGNOSTIC")
 menu = st.sidebar.radio("模組地圖", ["🚀 核心財務審計", "📚 戰略文庫", "📜 研報概覽"], index=0)
 
 # --- Helper: Strategic Library ---
@@ -107,11 +108,17 @@ if menu == "🚀 核心財務審計":
 
     # Audit Engine Initialization
     if st.sidebar.button("🔄 重置全系統審計") or not st.session_state.audit_init:
-        st.session_state.engine = ZiWeiEngine(b_date.year, b_date.month, b_date.day, b_hour, is_lunar, gender)
-        st.session_state.audit_data = st.session_state.engine.get_wealth_audit()
-        st.session_state.grid_data = st.session_state.engine.get_astrolabe_data()
-        st.session_state.fly_data = st.session_state.engine.fly_all_palaces()
-        st.session_state.audit_init = True
+        try:
+            st.session_state.engine = ZiWeiEngine(b_date.year, b_date.month, b_date.day, b_hour, is_lunar, gender)
+            st.session_state.audit_data = st.session_state.engine.get_wealth_audit()
+            st.session_state.grid_data = st.session_state.engine.get_astrolabe_data()
+            st.session_state.fly_data = st.session_state.engine.fly_all_palaces()
+            st.session_state.audit_init = True
+            st.success("✅ 審計系統已重置，路徑與診斷已更新。")
+        except Exception as e:
+            st.error(f"❌ 審計系統啟動失敗: {e}")
+            import traceback
+            st.code(traceback.format_exc())
 
     audit = st.session_state.audit_data
     grid = st.session_state.grid_data

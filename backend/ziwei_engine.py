@@ -32,6 +32,12 @@ class ZiWeiEngine:
         "propertyPalace": "田宅宮", "spiritPalace": "福德宮", "parentsPalace": "父母宮"
     }
 
+    # Palace List Order for Clash (180-degree) calculation
+    PALACE_LIST_ORDER = [
+        "命宮", "兄弟宮", "夫妻宮", "子女宮", "財帛宮", "疾厄宮",
+        "遷移宮", "交友宮", "官祿宮", "田宅宮", "福德宮", "父母宮"
+    ]
+
     # Absolute Internal-to-Traditional Star Mapping
     STAR_MAP = {
         "ziweiMaj": "紫微", "tianjiMaj": "天機", "taiyangMaj": "太陽", "wuquMaj": "武曲", 
