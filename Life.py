@@ -168,22 +168,33 @@ if menu == "🚀 核心財務審計":
             rep_img = st.session_state.engine.get_image_base64(rep_star)
             
             st.markdown('<div class="decision-center">', unsafe_allow_html=True)
-            if rep_img:
-                st.image(rep_img, width=140)
+            
+            # Using native Streamlit columns to perfectly move the details UP next to the image
+            c_left, c_right = st.columns([1, 1.5])
+            
+            with c_left:
+                if rep_img:
+                    st.image(rep_img, width=140)
+                    
+            with c_right:
+                st.markdown(f"""
+                <h1 style="color:var(--inst-blue) !important; font-size:2.4rem; margin-bottom:2px; margin-top:0;">{focus_p['name']}</h1>
+                <p style="color:#94a3b8 !important; font-size:1.1rem; font-weight:600; margin-bottom:15px;">{b_date.strftime('%Y-%m-%d')} · {b_hour_raw}</p>
+                <div style="flex-direction: column; display:flex; align-items:flex-start; gap:12px; margin-bottom:15px;">
+                    <div style="color:#10b981 !important; font-size:1.8rem; font-weight:900; background:rgba(16,185,129,0.05); padding:5px 20px; border-radius:10px;">
+                        <span style="color:#10b981 !important;">{focus_fly.get('lu_star', '化祿')} ➔ {focus_fly.get('lu_dest', '未知')}</span>
+                        <div style="font-size:0.8rem; font-weight:600; color:#10b981;">手段：{focus_fly.get('lu_means', '請重置審計')}</div>
+                    </div>
+                    <div style="color:#ef4444 !important; font-size:1.8rem; font-weight:900; background:rgba(239,68,68,0.05); padding:5px 20px; border-radius:10px;">
+                        <span style="color:#ef4444 !important;">{focus_fly.get('ji_star', '化忌')} ➔ {focus_fly.get('ji_dest', '未知')}</span>
+                        <div style="font-size:0.8rem; font-weight:600; color:#ef4444;">風險：{focus_fly.get('ji_hazard', '請重置審計')}</div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+            # Render the purple banner below both columns at full width
             st.markdown(f"""
-            <h1 style="color:var(--inst-blue) !important; font-size:2.4rem; margin-bottom:2px;">{focus_p['name']}</h1>
-            <p style="color:#94a3b8 !important; font-size:1.1rem; font-weight:600; margin-bottom:15px;">{b_date.strftime('%Y-%m-%d')} · {b_hour_raw}</p>
-            <div style="flex-direction: column; display:flex; align-items:center; gap:12px; margin-bottom:15px;">
-                <div style="color:#10b981 !important; font-size:1.8rem; font-weight:900; background:rgba(16,185,129,0.05); padding:5px 20px; border-radius:10px;">
-                    <span style="color:#10b981 !important;">{focus_fly.get('lu_star', '化祿')} ➔ {focus_fly.get('lu_dest', '未知')}</span>
-                    <div style="font-size:0.8rem; font-weight:600; color:#10b981;">手段：{focus_fly.get('lu_means', '請重置審計')}</div>
-                </div>
-                <div style="color:#ef4444 !important; font-size:1.8rem; font-weight:900; background:rgba(239,68,68,0.05); padding:5px 20px; border-radius:10px;">
-                    <span style="color:#ef4444 !important;">{focus_fly.get('ji_star', '化忌')} ➔ {focus_fly.get('ji_dest', '未知')}</span>
-                    <div style="font-size:0.8rem; font-weight:600; color:#ef4444;">風險：{focus_fly.get('ji_hazard', '請重置審計')}</div>
-                </div>
-            </div>
-            <div style="background:rgba(99,102,241,0.1); border-radius:10px; padding:10px 15px; border-left:4px solid #6366f1;">
+            <div style="background:rgba(99,102,241,0.1); border-radius:10px; padding:10px 15px; border-left:4px solid #6366f1; width:100%;">
                 <p style="color:#818cf8 !important; font-size:0.95rem; font-weight:700; margin:0;">📜 核心邏輯：{focus_fly.get('source_msg', '請點擊重置按鈕更新數據')}</p>
             </div>
             </div>""", unsafe_allow_html=True)
