@@ -293,47 +293,42 @@ if menu == "🚀 核心財務審計":
             # Build badges for prescriptions
             presc_badges = "".join([f'<span style="background:#d1fae5; color:#065f46; padding:4px 12px; border-radius:4px; font-size:0.85rem; font-weight:700;">{p}</span>' for p in p_d.get('prescription', [])])
             
-            # Use dedent to ensure HTML tags are not interpreted as code by Streamlit
-            card_html = textwrap.dedent(f"""
-                <div style="background:white; border:1px solid #e2e8f0; border-radius:15px; padding:25px; margin-bottom:20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                    <!-- Header -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #f1f5f9; padding-bottom:12px; margin-bottom:15px;">
-                        <h3 style="margin:0; color:#1e293b; font-weight:900;">🏢 {p_d.get('name', '未知')} ({p_d.get('stem', '?')}干)</h3>
-                        <span style="background:#f1f5f9; color:#64748b; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">Audit Cluster #{p_idx+1}</span>
-                    </div>
+            # Avoid any leading indentation in the string to prevent Streamlit from treating it as a markdown code block
+            card_html = f"""
+<div style="background:white; border:1px solid #e2e8f0; border-radius:15px; padding:25px; margin-bottom:20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #f1f5f9; padding-bottom:12px; margin-bottom:15px;">
+        <h3 style="margin:0; color:#1e293b; font-weight:900;">🏢 {p_d.get('name', '未知')} ({p_d.get('stem', '?')}干)</h3>
+        <span style="background:#f1f5f9; color:#64748b; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">Audit Cluster #{p_idx+1}</span>
+    </div>
 
-                    <!-- Path & Intent -->
-                    <div style="margin-bottom:15px;">
-                        <div style="color:#64748b; font-size:0.85rem; font-weight:700; text-transform:uppercase;">🛰️ 戰略路徑 (Path)</div>
-                        <div style="color:#1e293b; font-size:1.1rem; font-weight:800; margin:5px 0;">{p_d.get('path', 'N/A')}</div>
-                        <div style="background:rgba(99,102,241,0.08); padding:8px 12px; border-radius:6px; color:#4338ca; font-size:0.95rem; font-weight:700; border-left:4px solid #6366f1;">
-                            🚀 關鍵意涵：{p_d.get('intent', 'N/A')}
-                        </div>
-                    </div>
+    <div style="margin-bottom:15px;">
+        <div style="color:#64748b; font-size:0.85rem; font-weight:700; text-transform:uppercase;">🛰️ 戰略路徑 (Path)</div>
+        <div style="color:#1e293b; font-size:1.1rem; font-weight:800; margin:5px 0;">{p_d.get('path', 'N/A')}</div>
+        <div style="background:rgba(99,102,241,0.08); padding:8px 12px; border-radius:6px; color:#4338ca; font-size:0.95rem; font-weight:700; border-left:4px solid #6366f1;">
+            🚀 關鍵意涵：{p_d.get('intent', 'N/A')}
+        </div>
+    </div>
 
-                    <!-- Warnings -->
-                    <div style="background:#fffcf0; border:1px solid #fef3c7; border-radius:8px; padding:15px; margin-bottom:15px;">
-                        <div style="color:#92400e; font-weight:800; font-size:0.85rem; margin-bottom:8px;">⚠️ 預警警號 (Warning Signals)</div>
-                        <ul style="margin:0; padding-left:20px; color:#92400e; font-size:0.9rem; line-height:1.6;">
-                            {warnings_list}
-                        </ul>
-                    </div>
+    <div style="background:#fffcf0; border:1px solid #fef3c7; border-radius:8px; padding:15px; margin-bottom:15px;">
+        <div style="color:#92400e; font-weight:800; font-size:0.85rem; margin-bottom:8px;">⚠️ 預警警號 (Warning Signals)</div>
+        <ul style="margin:0; padding-left:20px; color:#92400e; font-size:0.9rem; line-height:1.6;">
+            {warnings_list}
+        </ul>
+    </div>
 
-                    <!-- Diagnosis -->
-                    <div style="background:rgba(71,85,105,0.05); border-left:5px solid #475569; padding:15px; border-radius:4px; margin-bottom:15px;">
-                        <div style="color:#475569; font-weight:800; font-size:0.85rem; margin-bottom:5px;">📍 專家綜合診斷 (Expert Diagnosis)</div>
-                        <div style="color:#1e293b; font-size:1rem; font-weight:700; line-height:1.4;">{p_d.get('diagnosis', 'N/A')}</div>
-                    </div>
+    <div style="background:rgba(71,85,105,0.05); border-left:5px solid #475569; padding:15px; border-radius:4px; margin-bottom:15px;">
+        <div style="color:#475569; font-weight:800; font-size:0.85rem; margin-bottom:5px;">📍 專家綜合診斷 (Expert Diagnosis)</div>
+        <div style="color:#1e293b; font-size:1rem; font-weight:700; line-height:1.4;">{p_d.get('diagnosis', 'N/A')}</div>
+    </div>
 
-                    <!-- Prescription -->
-                    <div style="background:rgba(16,185,129,0.03); border:1px solid rgba(16,185,129,0.1); border-radius:8px; padding:15px;">
-                        <div style="color:#065f46; font-weight:800; font-size:0.85rem; margin-bottom:8px;">💡 處方箋 (Prescription)</div>
-                        <div style="display:flex; flex-wrap:wrap; gap:10px;">
-                            {presc_badges}
-                        </div>
-                    </div>
-                </div>
-            """)
+    <div style="background:rgba(16,185,129,0.03); border:1px solid rgba(16,185,129,0.1); border-radius:8px; padding:15px;">
+        <div style="color:#065f46; font-weight:800; font-size:0.85rem; margin-bottom:8px;">💡 處方箋 (Prescription)</div>
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            {presc_badges}
+        </div>
+    </div>
+</div>
+"""
             st.markdown(card_html, unsafe_allow_html=True)
     with t5:
         render_strategic_library()
