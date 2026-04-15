@@ -172,16 +172,16 @@ if menu == "🚀 核心財務審計":
             <p style="color:#94a3b8 !important; font-size:1.1rem; font-weight:600; margin-bottom:15px;">{b_date.strftime('%Y-%m-%d')} · {b_hour_raw}</p>
             <div style="flex-direction: column; display:flex; align-items:center; gap:12px; margin-bottom:15px;">
                 <div style="color:#10b981 !important; font-size:1.8rem; font-weight:900; background:rgba(16,185,129,0.05); padding:5px 20px; border-radius:10px;">
-                    <span style="color:#10b981 !important;">{focus_fly['lu_star']}化祿 ➔ {focus_fly['lu_dest']}</span>
-                    <div style="font-size:0.8rem; font-weight:600; color:#10b981;">手段：{focus_fly['lu_means']}</div>
+                    <span style="color:#10b981 !important;">{focus_fly.get('lu_star', '化祿')} ➔ {focus_fly.get('lu_dest', '未知')}</span>
+                    <div style="font-size:0.8rem; font-weight:600; color:#10b981;">手段：{focus_fly.get('lu_means', '請重置審計')}</div>
                 </div>
                 <div style="color:#ef4444 !important; font-size:1.8rem; font-weight:900; background:rgba(239,68,68,0.05); padding:5px 20px; border-radius:10px;">
-                    <span style="color:#ef4444 !important;">{focus_fly['ji_star']}化忌 ➔ {focus_fly['ji_dest']}</span>
-                    <div style="font-size:0.8rem; font-weight:600; color:#ef4444;">風險：{focus_fly['ji_hazard']}</div>
+                    <span style="color:#ef4444 !important;">{focus_fly.get('ji_star', '化忌')} ➔ {focus_fly.get('ji_dest', '未知')}</span>
+                    <div style="font-size:0.8rem; font-weight:600; color:#ef4444;">風險：{focus_fly.get('ji_hazard', '請重置審計')}</div>
                 </div>
             </div>
             <div style="background:rgba(99,102,241,0.1); border-radius:10px; padding:10px 15px; border-left:4px solid #6366f1;">
-                <p style="color:#818cf8 !important; font-size:0.95rem; font-weight:700; margin:0;">📜 核心邏輯：{focus_fly['source_msg']}</p>
+                <p style="color:#818cf8 !important; font-size:0.95rem; font-weight:700; margin:0;">📜 核心邏輯：{focus_fly.get('source_msg', '請點擊重置按鈕更新數據')}</p>
             </div>
             </div>""", unsafe_allow_html=True)
             
@@ -289,14 +289,14 @@ if menu == "🚀 核心財務審計":
             <div style="background:white; border:1px solid #e2e8f0; border-radius:15px; padding:25px; margin-bottom:20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                 <!-- Header -->
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #f1f5f9; padding-bottom:12px; margin-bottom:15px;">
-                    <h3 style="margin:0; color:#1e293b; font-weight:900;">🏢 {p_d['name']} ({p_d['stem']}干)</h3>
+                    <h3 style="margin:0; color:#1e293b; font-weight:900;">🏢 {p_d.get('name', '未知')} ({p_d.get('stem', '?')}干)</h3>
                     <span style="background:#f1f5f9; color:#64748b; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">Diagnostic Cluster #{p_idx+1}</span>
                 </div>
                 
                 <!-- Step 1: Source -->
                 <div style="background:rgba(99,102,241,0.03); border:1px solid rgba(99,102,241,0.1); border-radius:8px; padding:12px; margin-bottom:15px;">
                     <div style="color:#6366f1; font-weight:800; font-size:0.85rem; text-transform:uppercase; margin-bottom:4px;">🚀 步驟 1: 發射站 (Source Intent)</div>
-                    <div style="color:#1e293b; font-size:0.95rem;">{p_d['source_msg']}</div>
+                    <div style="color:#1e293b; font-size:0.95rem;">{p_d.get('source_msg', '請點擊【重置全系統審計】以載入新邏輯')}</div>
                 </div>
                 
                 <!-- Step 2 & 3: Carriers -->
@@ -304,17 +304,17 @@ if menu == "🚀 核心財務審計":
                     <!-- Lu Chain -->
                     <div style="background:rgba(16,185,129,0.02); border:1px solid rgba(16,185,129,0.1); border-left:5px solid #10b981; padding:15px; border-radius:8px;">
                         <div style="color:#10b981; font-weight:800; font-size:0.85rem; margin-bottom:8px;">📈 獲利鏈 (Profit Chain)</div>
-                        <div style="font-weight:900; color:#065f46; font-size:1.1rem; margin-bottom:5px;">{p_d['lu_star']}化祿 ➔ {p_d['lu_dest']}</div>
-                        <div style="font-size:0.85rem; color:#047857; margin-bottom:4px;"><b>手段：</b>{p_d['lu_means']}</div>
-                        <div style="font-size:0.85rem; color:#047857;"><b>效果：</b>{p_d['lu_effect']}</div>
+                        <div style="font-weight:900; color:#065f46; font-size:1.1rem; margin-bottom:5px;">{p_d.get('lu_star', '化祿')} ➔ {p_d.get('lu_dest', '未知')}</div>
+                        <div style="font-size:0.85rem; color:#047857; margin-bottom:4px;"><b>手段：</b>{p_d.get('lu_means', 'N/A')}</div>
+                        <div style="font-size:0.85rem; color:#047857;"><b>效果：</b>{p_d.get('lu_effect', 'N/A')}</div>
                     </div>
                     
                     <!-- Ji Chain -->
                     <div style="background:rgba(239,68,68,0.02); border:1px solid rgba(239,68,68,0.1); border-left:5px solid #ef4444; padding:15px; border-radius:8px;">
                         <div style="color:#ef4444; font-weight:800; font-size:0.85rem; margin-bottom:8px;">🛡️ 風險鏈 (Risk Chain)</div>
-                        <div style="font-weight:900; color:#991b1b; font-size:1.1rem; margin-bottom:5px;">{p_d['ji_star']}化忌 ➔ {p_d['ji_dest']}</div>
-                        <div style="font-size:0.85rem; color:#b91c1c; margin-bottom:4px;"><b>隱患：</b>{p_d['ji_hazard']}</div>
-                        <div style="font-size:0.85rem; color:#b91c1c;"><b>衝擊：</b>{p_d['ji_effect']}</div>
+                        <div style="font-weight:900; color:#991b1b; font-size:1.1rem; margin-bottom:5px;">{p_d.get('ji_star', '化忌')} ➔ {p_d.get('ji_dest', '未知')}</div>
+                        <div style="font-size:0.85rem; color:#b91c1c; margin-bottom:4px;"><b>隱患：</b>{p_d.get('ji_hazard', 'N/A')}</div>
+                        <div style="font-size:0.85rem; color:#b91c1c;"><b>衝擊：</b>{p_d.get('ji_effect', 'N/A')}</div>
                     </div>
                 </div>
                 
@@ -323,14 +323,14 @@ if menu == "🚀 核心財務審計":
                     <div style="font-size:1.5rem;">⚠️</div>
                     <div>
                         <div style="color:#9a3412; font-weight:800; font-size:0.85rem;">關鍵警報：忌沖擊宮位</div>
-                        <div style="color:#c2410c; font-size:0.9rem; font-weight:700;">化忌落入『{p_d['ji_dest']}』，直接沖擊對宮『{p_d['clash']}』。</div>
+                        <div style="color:#c2410c; font-size:0.9rem; font-weight:700;">化忌落入『{p_d.get('ji_dest', '未知')}』，直接沖擊對宮『{p_d.get('clash', '未知')}』。</div>
                     </div>
                 </div>
                 
                 <!-- Prescription -->
                 <div style="background:#f8fafc; border-radius:10px; padding:15px; border:1px dashed #cbd5e1;">
                     <div style="color:#475569; font-weight:800; font-size:0.85rem; margin-bottom:5px;">📍 首席審計官處方箋 (Expert Advice)</div>
-                    <div style="color:#1e293b; font-size:0.95rem; font-style:italic; line-height:1.4;">{p_d['advice']}</div>
+                    <div style="color:#1e293b; font-size:0.95rem; font-style:italic; line-height:1.4;">{p_d.get('advice', '請點擊重置按鈕更新數據')}</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
