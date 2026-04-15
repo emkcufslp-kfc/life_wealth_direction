@@ -173,13 +173,15 @@ if menu == "🚀 核心財務審計":
             <div style="flex-direction: column; display:flex; align-items:center; gap:12px; margin-bottom:15px;">
                 <div style="color:#10b981 !important; font-size:1.8rem; font-weight:900; background:rgba(16,185,129,0.05); padding:5px 20px; border-radius:10px;">
                     <span style="color:#10b981 !important;">{focus_fly['lu_star']}化祿 ➔ {focus_fly['lu_dest']}</span>
+                    <div style="font-size:0.8rem; font-weight:600; color:#10b981;">手段：{focus_fly['lu_means']}</div>
                 </div>
                 <div style="color:#ef4444 !important; font-size:1.8rem; font-weight:900; background:rgba(239,68,68,0.05); padding:5px 20px; border-radius:10px;">
                     <span style="color:#ef4444 !important;">{focus_fly['ji_star']}化忌 ➔ {focus_fly['ji_dest']}</span>
+                    <div style="font-size:0.8rem; font-weight:600; color:#ef4444;">風險：{focus_fly['ji_hazard']}</div>
                 </div>
             </div>
             <div style="background:rgba(99,102,241,0.1); border-radius:10px; padding:10px 15px; border-left:4px solid #6366f1;">
-                <p style="color:#818cf8 !important; font-size:0.95rem; font-weight:700; margin:0;">📜 核心邏輯：{focus_fly['logic']}</p>
+                <p style="color:#818cf8 !important; font-size:0.95rem; font-weight:700; margin:0;">📜 核心邏輯：{focus_fly['source_msg']}</p>
             </div>
             </div>""", unsafe_allow_html=True)
             
@@ -279,32 +281,59 @@ if menu == "🚀 核心財務審計":
                 </div>
             </div>""", unsafe_allow_html=True)
     with t4:
-        st.markdown("### 🛰️ 偵察部 (12宮連鎖) 戰略路徑審計")
-        st.info("💡 此表分析企業內部 12 個部門的橫向聯繫與資源消耗路徑，核心在於觀察『化祿』的獲利供給與『化忌』的風險傳導。")
+        st.markdown("### 🛰️ 偵察部 (12宮連鎖) 戰略路徑全域審計")
+        st.info("💡 此模組透過『發射站 ➔ 能量載體 ➔ 落點效應』三位一體邏輯，鎖定企業內部的獲利動能與風險破洞。")
         
         for p_idx, p_d in fly_data.items():
-            with st.container():
-                st.markdown(f"""
-                <div style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-bottom:15px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h4 style="margin:0; color:#1e293b;">🏢 {p_d['name']} ({p_d['stem']})</h4>
-                        <span style="font-size:0.85rem; color:#64748b;">🔍 連鎖診斷中...</span>
+            st.markdown(f"""
+            <div style="background:white; border:1px solid #e2e8f0; border-radius:15px; padding:25px; margin-bottom:20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                <!-- Header -->
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #f1f5f9; padding-bottom:12px; margin-bottom:15px;">
+                    <h3 style="margin:0; color:#1e293b; font-weight:900;">🏢 {p_d['name']} ({p_d['stem']}干)</h3>
+                    <span style="background:#f1f5f9; color:#64748b; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">Diagnostic Cluster #{p_idx+1}</span>
+                </div>
+                
+                <!-- Step 1: Source -->
+                <div style="background:rgba(99,102,241,0.03); border:1px solid rgba(99,102,241,0.1); border-radius:8px; padding:12px; margin-bottom:15px;">
+                    <div style="color:#6366f1; font-weight:800; font-size:0.85rem; text-transform:uppercase; margin-bottom:4px;">🚀 步驟 1: 發射站 (Source Intent)</div>
+                    <div style="color:#1e293b; font-size:0.95rem;">{p_d['source_msg']}</div>
+                </div>
+                
+                <!-- Step 2 & 3: Carriers -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+                    <!-- Lu Chain -->
+                    <div style="background:rgba(16,185,129,0.02); border:1px solid rgba(16,185,129,0.1); border-left:5px solid #10b981; padding:15px; border-radius:8px;">
+                        <div style="color:#10b981; font-weight:800; font-size:0.85rem; margin-bottom:8px;">📈 獲利鏈 (Profit Chain)</div>
+                        <div style="font-weight:900; color:#065f46; font-size:1.1rem; margin-bottom:5px;">{p_d['lu_star']}化祿 ➔ {p_d['lu_dest']}</div>
+                        <div style="font-size:0.85rem; color:#047857; margin-bottom:4px;"><b>手段：</b>{p_d['lu_means']}</div>
+                        <div style="font-size:0.85rem; color:#047857;"><b>效果：</b>{p_d['lu_effect']}</div>
                     </div>
-                    <div style="display:flex; gap:20px; margin-top:15px;">
-                        <div style="flex:1; background:rgba(16,185,129,0.05); border-left:4px solid #10b981; padding:10px; border-radius:4px;">
-                            <small style="color:#059669; font-weight:bold;">📈 獲利供給 (化祿)</small><br>
-                            ➔ {p_d['lu_dest']}
-                        </div>
-                        <div style="flex:1; background:rgba(239,68,68,0.05); border-left:4px solid #ef4444; padding:10px; border-radius:4px;">
-                            <small style="color:#b91c1c; font-weight:bold;">🛡️ 風險傳導 (化忌)</small><br>
-                            ➔ {p_d['ji_dest']}
-                        </div>
-                    </div>
-                    <div style="margin-top:10px; font-size:0.9rem; color:#4b5563;">
-                        <b>📍 專家診斷：</b> {p_d['collision']}
+                    
+                    <!-- Ji Chain -->
+                    <div style="background:rgba(239,68,68,0.02); border:1px solid rgba(239,68,68,0.1); border-left:5px solid #ef4444; padding:15px; border-radius:8px;">
+                        <div style="color:#ef4444; font-weight:800; font-size:0.85rem; margin-bottom:8px;">🛡️ 風險鏈 (Risk Chain)</div>
+                        <div style="font-weight:900; color:#991b1b; font-size:1.1rem; margin-bottom:5px;">{p_d['ji_star']}化忌 ➔ {p_d['ji_dest']}</div>
+                        <div style="font-size:0.85rem; color:#b91c1c; margin-bottom:4px;"><b>隱患：</b>{p_d['ji_hazard']}</div>
+                        <div style="font-size:0.85rem; color:#b91c1c;"><b>衝擊：</b>{p_d['ji_effect']}</div>
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
+                
+                <!-- Step 4: Clash Warning -->
+                <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:8px; padding:12px; margin-bottom:15px; display:flex; align-items:center; gap:10px;">
+                    <div style="font-size:1.5rem;">⚠️</div>
+                    <div>
+                        <div style="color:#9a3412; font-weight:800; font-size:0.85rem;">關鍵警報：忌沖擊宮位</div>
+                        <div style="color:#c2410c; font-size:0.9rem; font-weight:700;">化忌落入『{p_d['ji_dest']}』，直接沖擊對宮『{p_d['clash']}』。</div>
+                    </div>
+                </div>
+                
+                <!-- Prescription -->
+                <div style="background:#f8fafc; border-radius:10px; padding:15px; border:1px dashed #cbd5e1;">
+                    <div style="color:#475569; font-weight:800; font-size:0.85rem; margin-bottom:5px;">📍 首席審計官處方箋 (Expert Advice)</div>
+                    <div style="color:#1e293b; font-size:0.95rem; font-style:italic; line-height:1.4;">{p_d['advice']}</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
     with t5:
         render_strategic_library()
 

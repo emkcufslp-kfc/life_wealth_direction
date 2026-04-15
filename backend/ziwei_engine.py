@@ -92,18 +92,18 @@ class ZiWeiEngine:
         },
         "childrenPalace": {
             "祿": {"inner": "合夥事業順利、資金擴張、晚輩孝順。能量向外發散，適合新創投資與教育業。", "outer": "桃花帶財、合夥人好相處。利用外部連結獲利，過程愉悅受惠。", "sop": "擴張型投資。能量擴張在於『外部合作』。"},
-            "權": {"inner": "強勢主導合夥項目、子孫有成就。在外部競爭中展現霸氣，掌控投資標的。", "outer": "合夥生意競爭激烈、小孩霸道。注意與合夥人的權利平衡。", "sop": "競爭型投資。能量強壓在於『專案壟斷』。"},
-            "科": {"inner": "合夥關係清白、投資有計畫、晚輩明理。計畫性推展業務，重視規章制度。", "outer": "子女有名望、合夥標的穩健。以分散風險的小額入股為主。", "sop": "計畫型投資。能量梳理在於『流程合規』。"},
+            "權": {"inner": "強勢主導合夥項目、子孫有成就。在外部競爭中展現霸氣，掌控投資標的。", "outer": "合夥生意競爭激烈、小孩霸道。注意與合夥人的權利平衡。", "sop": "競爭型投資. 能量強壓在於『專案壟斷』。"},
+            "科": {"inner": "合夥關係清白、投資有計畫、晚輩明理。計畫性推展業務，重視規章制度。", "outer": "子女有名望、合夥標的穩健。以分散風險的小額入股為主。", "sop": "計畫型投資. 能量梳理在於『流程合規』。"},
             "忌": {"inner": "投資必敗、合夥觸雷、敗家子、敗產。能量黑洞在此，嚴禁非專業合夥與投機。", "outer": "小孩難教、因桃花劫破財。人生的業障點在於『盲目投資』。", "sop": "黑洞型投資. 能量黑洞在於『資金套牢』。終身拒絕非專業合夥與高頻投機。"}
         },
         "wealthPalace": {
-            "祿": {"inner": "自帶吸金體質、賺錢輕鬆、財源廣。將愛與關注投入求財，現金流動向良好。", "outer": "對人大方、用錢買人脈、利潤分享。適合動態獲利與高頻套利。", "sop": "現金流之王。能量擴張在於『賺錢手段』。"},
+            "祿": {"inner": "自帶吸金體質、賺錢輕鬆、財源廣。將愛與關注投入求財，現金流動向良好。", "outer": "對人大方、用錢買人脈、利潤分享。適合動態獲利與高頻套利。", "sop": "現金流之王. 能量擴張在於『賺錢手段』。"},
             "權": {"inner": "追求高利潤、掌控財權、敢於重押。財務高槓桿，在商場競爭力極強。", "outer": "用錢壓人、商場競爭白熱化。注意風險控制，避免一次爆倉。", "sop": "槓桿之王. 能量強壓在於『利潤獲取』。"},
             "科": {"inner": "理財平穩、正式收入、靠專業賺錢。理財態度理性中庸，帳目清晰透明。", "outer": "靠名聲賺錢、理財計畫完善。適合藍籌股、定存與特許收入。", "sop": "專業之財. 能量梳理在於『理財秩序』。"},
             "忌": {"inner": "守財奴、為錢辛苦、錢留不住、財庫破。為錢苦惱反被錢困，必須改用指數投資。", "outer": "因錢遭災、因財起糾紛、損友。能量的黑洞在於『金錢焦慮』。", "sop": "黑洞型財富. 能量黑洞在於『現金流失』。嚴禁情緒化交易，建議採用自動化理財。"}
         },
         "healthPalace": {
-            "祿": {"inner": "樂觀發福、身體健康、宅居舒適。享受人生，能量在肉體與潛意識中愉悅擴張。", "outer": "店面興旺、對外形象親切。適合從事房產收租與健康產業。", "sop": "享受型體質. 能量擴張在於『身體感官』。"},
+            "祿": {"inner": "樂觀發福、身體健康、宅居舒適。享受人生，能量在肉體與潛意識中愉悅擴張。", "outer": "店面興旺、對外形象親切. 適合從事房產收租與健康產業。", "sop": "享受型體質. 能量擴張在於『身體感官』。"},
             "權": {"inner": "生命力強悍、抗壓性高、勞碌拼命。將強壓能量作用於肉體，爆發力極強。", "outer": "店面擴張、展現強大影響力. 注意職業病預防，適合硬核勞動力。", "sop": "強健型體質. 能量強壓在於『抗壓能力』。"},
             "科": {"inner": "遇病有良醫、精神層次高、修養好。能量梳理得宜，給人平和穩定的初象。", "outer": "醫護朋友多、外在斯文。適合與醫療保健、身心靈產業連結。", "sop": "療癒型體質. 能量梳理在於『情緒調節』。"},
             "忌": {"inner": "體弱多病、潛意識創傷、重度焦慮. 黑洞在肉體中，強化保險規劃，嚴禁過勞。", "outer": "店面虧損、工作場地出事。人生的業障點在於『病灶纏身』。", "sop": "損耗型體質. 能量黑洞在於『能量透支』。加強預防醫學，避免長期高壓環境。"}
@@ -111,7 +111,7 @@ class ZiWeiEngine:
         "surfacePalace": {
             "祿": {"inner": "出外遇貴人、際遇好、在大眾前吃香。在社會環境中擴張人緣，適合遠方財。", "outer": "社會資源豐富、海外機遇多。宜離鄉發展，建立廣泛的社交網。", "sop": "社交型格局. 能量擴張在於『外部機遇』。"},
             "權": {"inner": "在外好勝、展現競爭力、掌控輿論。強勢進軍外部市場，積極拓展板圖。", "outer": "海外併購、外匯高頻操作. 注意法律合規，避免過度擴張招忌。", "sop": "競爭型格局. 能量強壓在於『社會地位』。"},
-            "科": {"inner": "在外平安有聲望、給人理智印象。靠名氣、學歷或執照在外立足，生活平順。", "outer": "海外生活優雅、社交圈層次高。重視外在形象與專業信用。", "sop": "形象型格局. 能量梳理在於『專業信用』。"},
+            "科": {"inner": "在外平安有聲望、給人理智印象。靠名氣、學歷 or 執照在外立足，生活平順。", "outer": "海外生活優雅、社交圈層次高。重視外在形象與專業信用。", "sop": "形象型格局. 能量梳理在於『專業信用』。"},
             "忌": {"inner": "出外水土不服、海外投資慘賠。環境對我不利，能量黑洞在外部際遇中。", "outer": "海外災多、大眾緣差、遭意外。宜安分待在熟悉的環境中發展。", "sop": "孤僻型格局. 能量黑洞在於『外部受挫』。外出必備保險，且不輕易移居他鄉。"}
         },
         "friendsPalace": {
@@ -122,26 +122,26 @@ class ZiWeiEngine:
         },
         "careerPalace": {
             "祿": {"inner": "熱愛工作、事業順遂、極易變現。將核心動機投入事業，享受擴張的過程。", "outer": "事業帶旺家庭、對伴侶有益。適合多元化發展，擴大業務版圖。", "sop": "順境型事業. 能量擴張在於『業務開發』。"},
-            "權": {"inner": "企圖心強、職場競爭力極高、掌控權。在專業領域內強勢爭奪資源，追求成就。", "outer": "掌控事業話語權、競爭對手強大。適合在高壓、高競爭環境生存。", "sop": "權力型事業. 能量強壓在於『市場市佔』。"},
-            "科": {"inner": "職場名聲好、靠專業立身、流程標準。注重名聲與合規，適合諮詢或教育產業。", "outer": "業務推展有計畫、合約平穩。靠執照、證照或專業形象獲利。", "sop": "專業型事業. 能量梳理在於『標準規章』。"},
+            "權": {"inner": "企圖心強、職場競爭力極高、掌控權。在專業領域內強勢爭奪資源，追求成就。", "outer": "掌控事業話語權、競爭對手強大. 適合在高壓、高競爭環境生存。", "sop": "權力型事業. 能量強壓在於『市場市佔』。"},
+            "科": {"inner": "職場名聲好、靠專業立身、流程標準。注重名聲與合規，適合諮詢或教育產業。", "outer": "業務推展有計畫、合約平穩。靠執照、證照 or 專業形象獲利。", "sop": "專業型事業. 能量梳理在於『標準規章』。"},
             "忌": {"inner": "事業瓶頸、工作勞而無功、套牢事業。能量在此黑洞化，必須轉向輕資產模式發展。", "outer": "失業風險、事業拖累家庭、官非。人生的業障點在於『職涯波折』。", "sop": "逆境型事業. 能量黑洞在於『經營阻礙』。保持核心能力，避免陷入重資產陷阱。"}
         },
         "propertyPalace": {
             "祿": {"inner": "家產豐厚、居家豪華、財入庫能守。能量向庫房輸送，家庭是溫暖的避風港。", "outer": "家族興旺、德高望重、祖產增值。房產與黃金是你的守護神。", "sop": "財庫型格局. 能量擴張在於『資產歸宿』。"},
-            "權": {"inner": "強勢置產、家中我說了算、霸占家產。高槓桿運作房地產，家族事業掌控力強。", "outer": "房產不斷增值、家族擴張迅速。適合地產開發或大規模持房。", "sop": "霸主型資產. 能量強壓在於『資源壟斷』。"},
-            "科": {"inner": "家教好、居家優雅、資產緩步增長。資產配置以穩健為主，房產產權清晰。", "outer": "家族聲望佳、資產傳承平順。重視居家環境的衛生與文化氣息。", "sop": "文雅型資產. 能量梳理在於『資產傳播』。"},
+            "權": {"inner": "強勢置產、家中我說了算、霸占家產。高槓桿運作房地產，家族事業掌控力強。", "outer": "房產不斷增值、家族擴張迅速. 適合地產開發或大規模持房。", "sop": "霸主型資產. 能量強壓在於『資源壟斷』。"},
+            "科": {"inner": "家教好、居家優雅、資產緩步增長。資產配置以穩健為主，房產產權清晰。", "outer": "家族聲望佳、資產傳承平順. 重視居家環境的衛生與文化氣息。", "sop": "文雅型資產. 能量梳理在於『資產傳播』。"},
             "忌": {"inner": "房產套牢、家宅不寧、現金被家掏空. 黑洞在此，慎防房屋漏水或產權糾紛敗產。", "outer": "家道中落、被迫搬家、敗祖德。人生的業障點在於『家運破敗』。", "sop": "破耗型資產. 能量黑洞在於『資產鎖死』。保留充足現金，慎防因家務事損及資產。"}
         },
         "spiritPalace": {
             "祿": {"inner": "精神愉悅、偏財極佳、福報深厚。相信直覺，將愛投入內在世界，享受人生。", "outer": "享受人生、大方好施、與眾共惠. 適合感性驅動投資，福報迴向自我。", "sop": "福報型格局. 能量擴張在於『精神享受』。"},
             "權": {"inner": "意志強悍、主觀性強、追求精神成就。透過強壓意志達成目標，意志即是金錢。", "outer": "追求排場、慾望極強、強迫自己. 注意精神緊繃引發的身心失調。", "sop": "執念型格局. 能量強壓在於『意志磨練』。"},
-            "科": {"inner": "修養極好、理性平衡、重視精神層次。在複雜世界中保持梳理，適合藝術、哲學。", "outer": "處事分寸拿揶精準、受人尊敬。重視精神糧食與文化愛好。", "sop": "理智型格局. 能量梳理在於『心智穩定』。"},
+            "科": {"inner": "修養極好、理性平衡、重視精神層次。在複雜世界中保持梳理，適合藝術、哲學。", "outer": "處事分寸拿揶精準、受人尊敬. 重視精神糧食與文化愛好。", "sop": "理智型格局. 能量梳理在於『心智穩定』。"},
             "忌": {"inner": "精神黑洞、鑽牛角尖、重度焦慮症. 能量在此糾結，嚴禁主觀重押，忌諱極端。", "outer": "極端偏激、因嗜好大破財、想不開. 人生的業障點在於『潛意識創傷』。", "sop": "業力型精神. 能量黑洞在於『煩惱自尋』。尋其正面嗜好轉移注意力，嚴禁主觀執迷。"}
         },
         "parentsPalace": {
-            "祿": {"inner": "長輩疼愛、體制內資源、合約順遂。將愉悅動機投入對上級的運作，獲利豐厚。", "outer": "得政府標案、信貸信譽好、父母強。適合賺體制內的錢、銀行槓桿。", "sop": "背景型格局. 能量擴張在於『上層通路』。"},
+            "祿": {"inner": "長輩疼愛、體制內資源、合約順遂。將愉悅動機投入對上級的運作，獲利豐厚。", "outer": "得政府標案、信貸信譽好、父母強. 適合賺體制內的錢、銀行槓桿。", "sop": "背景型格局. 能量擴張在於『上層通路』。"},
             "權": {"inner": "挑戰威權、對長輩強勢、想主導體制。強勢與長官或規則競爭，謀求更高權限。", "outer": "受制於嚴苛法規、長輩強勢打壓. 注意言行，避免觸碰法律紅線。", "sop": "衝突型體質. 能量強壓在於『體制對抗』。"},
-            "科": {"inner": "長輩緣佳、求學順遂、信譽度極高。靠合約、文書或專業執照獲得穩定發展。", "outer": "父母有名望、信譽保障、合規性佳。適合金融、法律與特許行業。", "sop": "信用型格局. 能量梳理在於『合規誠信』。"},
+            "科": {"inner": "長輩緣佳、求學順遂、信譽度極高。靠合約、文書 or 專業執照獲得穩定發展。", "outer": "父母有名望、信譽保障、合規性佳. 適合金融、法律與特許行業。", "sop": "信用型格局. 能量梳理在於『合規誠信』。"},
             "忌": {"inner": "與長輩不合、體制打壓、文書官非。黑洞在文書與法律中，簽約必請律師。", "outer": "父母多難、銀行抽根、合約漏洞. 人生的業障點在於『長輩業力』。", "sop": "文書型災難. 能量黑洞在於『法律糾紛』。合約簽署前務必諮詢專業意見。"}
         }
     }
@@ -153,6 +153,52 @@ class ZiWeiEngine:
         "巨門": "ju_men_truth_seeker.png", "天相": "tian_xiang_negotiator.png", "天梁": "tian_liang_protector.png",
         "七殺": "qi_sha_conqueror.png", "破軍": "po_jun_rebel.png"
     }
+
+    # --- Enhanced Flying Star Chain Rules (Based on SOP) ---
+    SOURCE_RULES = {
+        "命宮": {"lu": "我主動追求、天賦展現", "ji": "我執著、看不開、自我虧損"},
+        "兄弟宮": {"lu": "現金流動、兄弟助力、床位/健康氣位", "ji": "現金卡住、借貸糾紛、身體隱疾"},
+        "夫妻宮": {"lu": "配偶幫助、異性緣、在外形象", "ji": "感情債、配偶拖累、婚變風險"},
+        "子女宮": {"lu": "合夥順利、投資獲利、晚輩緣、桃花", "ji": "合夥破局、投資虧損、桃花劫、意外"},
+        "財帛宮": {"lu": "賺錢行為、錢財流向、賺錢機會", "ji": "財務缺口、錯誤決策、因錢傷感"},
+        "疾厄宮": {"lu": "身體本質、潛意識、店面人氣", "ji": "身體病變、心結難解、店面營運差"},
+        "遷移宮": {"lu": "出外遇貴人、社會名聲、意外運", "ji": "出外不順、車禍風險、人際孤立"},
+        "交友宮": {"lu": "眾生緣、客戶支持、人脈變現", "ji": "小人陷害、損友拖累、人情壓力"},
+        "官祿宮": {"lu": "工作模式、運氣擴張、升遷快", "ji": "工作過勞、官司是非、營運危機"},
+        "田宅宮": {"lu": "家運興隆、資產增值、財庫儲存", "ji": "家宅不寧、財庫破洞、變賣祖產"},
+        "福德宮": {"lu": "精神滿足、興趣獲利、祖德", "ji": "精神焦慮、情緒失控、因興趣敗家"},
+        "父母宮": {"lu": "長輩提攜、文書合約、信用良好", "ji": "文書失誤、官非罰單、信用破產"}
+    }
+
+    STEM_RULES = {
+        "甲": {"lu_star": "廉貞", "lu_mean": "精密規劃、桃花人緣、電子科技", "ji_star": "太陽", "ji_mean": "男人惹禍、死要面子、公關危機"},
+        "乙": {"lu_star": "天機", "lu_mean": "智慧企劃、頻繁變動、轉手機務", "ji_star": "太陰", "ji_mean": "女人受累、房產虧損、情緒憂鬱"},
+        "丙": {"lu_star": "天同", "lu_mean": "服務協調、餐飲享樂、享福財", "ji_star": "廉貞", "ji_mean": "血光之災、官司刑罰、行政疏失"},
+        "丁": {"lu_star": "太陰", "lu_mean": "細膩佈局、女性市場、房產財", "ji_star": "巨門", "ji_mean": "口舌是非、暗處吃虧、詐欺債務"},
+        "戊": {"lu_star": "貪狼", "lu_mean": "交際應酬、投機偏財、博弈獲利", "ji_star": "天機", "ji_mean": "神經衰弱、判斷失誤、鑽牛角尖"},
+        "己": {"lu_star": "武曲", "lu_mean": "實力執行、金融操作、重工業", "ji_star": "文曲", "ji_mean": "合約陷阱、支票跳票、文書詐騙"},
+        "庚": {"lu_star": "太陽", "lu_mean": "名氣擴散、公益事業、男性貴人", "ji_star": "天同", "ji_mean": "無福消受、心力交瘁、泌尿代謝問題"},
+        "辛": {"lu_star": "巨門", "lu_mean": "口才傳播、專業技術、醫藥法律", "ji_star": "文昌", "ji_mean": "文書無效、違約罰單、法規變動"},
+        "壬": {"lu_star": "天梁", "lu_mean": "長輩蔭庇、繼承、保險醫療", "ji_star": "武曲", "ji_mean": "資金斷鏈、破產被劫、金屬傷害"},
+        "癸": {"lu_star": "破軍", "lu_mean": "創新突破、破壞建設、流行時尚", "ji_star": "貪狼", "ji_mean": "桃花糾紛、縱慾過度、因色敗家"}
+    }
+
+    IMPACT_RULES = {
+        "命宮": {"lu": "資源主動對我好，得利明顯", "ji": "責任壓在身上，心煩意亂"},
+        "兄弟宮": {"lu": "增加現金流，庫存增值", "ji": "現金卡住，兄弟受累"},
+        "夫妻宮": {"lu": "事業幫助配偶，異性緣增強", "ji": "配偶干擾事業，感情負擔"},
+        "子女宮": {"lu": "合夥投資順利，桃花多", "ji": "合夥拆夥，子女離心"},
+        "財帛宮": {"lu": "現金進帳順利，轉速快", "ji": "破財，資金周轉困難"},
+        "疾厄宮": {"lu": "心情愉快，身體好，店面旺", "ji": "身體不適，情緒卡點"},
+        "遷移宮": {"lu": "出外遇貴人，社會評價優", "ji": "在外處處碰壁，意外風險"},
+        "交友宮": {"lu": "人脈廣，客戶主動上門", "ji": "朋友欠錢，小人陷害"},
+        "官祿宮": {"lu": "工作順利，權力地位提升", "ji": "工作失誤多，容易換工作"},
+        "田宅宮": {"lu": "資產增值，家庭和諧，入庫", "ji": "庫存流失，家宅不寧"},
+        "福德宮": {"lu": "精神滿足，財源穩定", "ji": "精神焦慮，大破財(沖財)"},
+        "父母宮": {"lu": "長輩提攜，文書順利，信用增", "ji": "文書出錯，被長輩責罵"}
+    }
+
+    PALACE_LIST_ORDER = ["命宮", "兄弟宮", "夫妻宮", "子女宮", "財帛宮", "疾厄宮", "遷移宮", "交友宮", "官祿宮", "田宅宮", "福德宮", "父母宮"]
 
     def __init__(self, year, month, day, hour, is_lunar=False, gender="男"):
         self.gender_str = '男' if gender in ["男", "male"] else '女'
@@ -172,37 +218,21 @@ class ZiWeiEngine:
     def get_image_base64(self, image_name):
         """Unified image loader for star names and direct files (png/jpg)."""
         if not image_name: return ""
-        
-        # 1. Check if it's already a filename or a star name
         is_direct_file = any(image_name.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg"])
         filename = image_name if is_direct_file else self.CEO_IMAGES.get(image_name, "")
-        
-        # 2. Path Resolution
         path = self.ASSETS_DIR / filename if filename else None
-        
-        # 3. Last Resort Fallback (search by star name in CEO_IMAGES if image_name had an extension but was a star)
         if not path or not path.exists():
             clean_name = image_name.split(".")[0]
             filename_alt = self.CEO_IMAGES.get(clean_name, "")
-            if filename_alt:
-                path = self.ASSETS_DIR / filename_alt
-        
-        if not path or not path.exists():
-            print(f"[ERROR] Asset not found: {image_name} -> {filename}")
-            return ""
-        
-        # 4. MIME determination
+            if filename_alt: path = self.ASSETS_DIR / filename_alt
+        if not path or not path.exists(): return ""
         ext = path.suffix.lower()
         mime = "image/png" if ext == ".png" else "image/jpeg"
-        
         try:
             with open(path, "rb") as f:
                 b64 = base64.b64encode(f.read()).decode()
-                print(f"[DEBUG] Loaded Asset: {image_name} as {path.name} ({len(b64)} bytes)")
                 return f"data:{mime};base64,{b64}"
-        except Exception as e:
-            print(f"[ERROR] Failed to load {path}: {e}")
-            return ""
+        except Exception: return ""
 
     def get_astrolabe_data(self):
         res = {}
@@ -214,8 +244,7 @@ class ZiWeiEngine:
             sha_names = [self._translate(s) for s in all_stars if self._translate(s) in self.SHA_STARS]
             res[b_idx] = {
                 "name": p.translate_name(), "stem": p.translate_heavenly_stem(),
-                "major_stars": major_names, "lucky_stars": lucky_names, "sha_stars": sha_names,
-                "lucky_stars_ext": lucky_names, "sha_stars_ext": sha_names
+                "major_stars": major_names, "lucky_stars": lucky_names, "sha_stars": sha_names
             }
         return res
 
@@ -258,24 +287,41 @@ class ZiWeiEngine:
         for dp in self.astro.palaces:
             d_stars = [self._translate(s) for s in dp.major_stars + dp.minor_stars + dp.adjective_stars]
             if target_star in d_stars: 
-                # Return mapped Palace Name if available, else original
                 p_name_internal = dp.name
                 return self.PALACE_NAME_MAP.get(p_name_internal, dp.translate_name())
         return "未知"
+
+    def get_clash_palace(self, target_name):
+        try:
+            clean_name = target_name.replace("宮", "") + "宮"
+            idx = self.PALACE_LIST_ORDER.index(clean_name)
+            return self.PALACE_LIST_ORDER[(idx + 6) % 12]
+        except: return "對宮"
 
     def fly_all_palaces(self):
         res = {}
         for p in self.astro.palaces:
             b_idx = self._get_branch_idx(p)
+            p_name = p.translate_name()
             stem = p.translate_heavenly_stem()
-            y_map = self.SI_HUA_MAP_TRAD[stem]
+            
+            lu_dest = self.f_dest_by_branch(b_idx, "祿")
+            ji_dest = self.f_dest_by_branch(b_idx, "忌")
+            
+            src_data = self.SOURCE_RULES.get(p_name, {"lu": "未知", "ji": "未知"})
+            stem_data = self.STEM_RULES.get(stem, {"lu_star": "", "lu_mean": "", "ji_star": "", "ji_mean": ""})
+            lu_imp = self.IMPACT_RULES.get(lu_dest, {"lu": "現象不明"})
+            ji_imp = self.IMPACT_RULES.get(ji_dest, {"ji": "現象不明"})
+            clash_palace = self.get_clash_palace(ji_dest)
+            
             res[b_idx] = {
-                "name": p.translate_name(), "stem": stem,
-                "lu_star": y_map["祿"], "ji_star": y_map["忌"],
-                "lu_dest": self.f_dest_by_branch(b_idx, "祿"),
-                "ji_dest": self.f_dest_by_branch(b_idx, "忌"),
-                "logic": y_map["logic"],
-                "collision": f"獲利鏈條延伸至 {self.f_dest_by_branch(b_idx, '祿')}，同步防範 {self.f_dest_by_branch(b_idx, '忌')} 的風險傳導。"
+                "name": p_name, "stem": stem,
+                "lu_star": stem_data["lu_star"], "ji_star": stem_data["ji_star"],
+                "lu_dest": lu_dest, "ji_dest": ji_dest,
+                "source_msg": f"起因：{src_data['lu']} (祿因) / {src_data['ji']} (忌果)",
+                "lu_means": stem_data["lu_mean"], "lu_effect": lu_imp["lu"],
+                "ji_hazard": stem_data["ji_mean"], "ji_effect": ji_imp["ji"],
+                "clash": clash_palace, "advice": f"利用『{stem_data['lu_star']}』獲利，防範『{ji_dest}』風險，保住『{clash_palace}』。"
             }
         return res
 
@@ -286,19 +332,13 @@ class ZiWeiEngine:
             internal_p_name = d['palace']
             palace_display = self.PALACE_NAME_MAP.get(internal_p_name, "未知宮位")
             star_name = d['star']
-            
-            # Scenario Lookup
             scenario = self.STRATEGIC_SCENARIOS.get(internal_p_name, {}).get(t, {})
             is_inner = internal_p_name in {"soulPalace", "wealthPalace", "healthPalace", "careerPalace", "propertyPalace", "spiritPalace"}
-            
             meaning = scenario.get("sop", "待定策略位")
             impact = scenario.get("inner" if is_inner else "outer", "待定影響位")
-            
             res.append({
                 "header": f"【生年化{t} ➔ {star_name} ({palace_display})】",
-                "palace_def": f"這顆星曜在此宮位代表您一生中最核心的『{t}』之氣。",
-                "meaning": meaning,
-                "impact": impact,
-                "sop": scenario.get("sop", "待定策略位")
+                "palace_def": f"一生核心『{t}』之氣。",
+                "meaning": meaning, "impact": impact, "sop": scenario.get("sop", "待定策略位")
             })
         return res
